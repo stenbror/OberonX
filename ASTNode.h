@@ -23,6 +23,8 @@ class ASTNode
                     std::string moduleText, std::shared_ptr<ASTNode> left, 
                     std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes, 
                     std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeDeclarationSequence2Node(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
+        static std::shared_ptr<ASTNode> MakeDeclarationNode(unsigned int line, unsigned int col, std::string name, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;

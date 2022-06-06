@@ -206,6 +206,7 @@ std::shared_ptr<ASTNode> Parser::ParseModule() {
             case T_VAR:
             case T_PROCEDURE:
             case T_PROC:
+            case T_LEFTPAREN:
                 nodes->push_back(ParseDeclarationSequence());
                 break;
             default:    isLock = false;
@@ -232,8 +233,113 @@ std::shared_ptr<ASTNode> Parser::ParseModule() {
 std::shared_ptr<ASTNode> Parser::ParseImportList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseImport() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseImportPath() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseDefinition() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence2() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: 'DEFINITION' Ident [ ';' ] [ ImportList ] DeclarationSequence2 'END' Ident [ '.' ]
+std::shared_ptr<ASTNode> Parser::ParseDefinition() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance(); // 'DEFINITION'
+    CheckSymbol(T_IDENT, "Missing definition name!");
+    auto defName = m_Lexer->GetText();
+    m_Lexer->Advance();
+    auto left = m_Lexer->GetSymbol() == T_IMPORT ? ParseImportList() : nullptr;
+    auto right = ParseDeclarationSequence2();
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' in defintion!");
+    CheckSymbol(T_IDENT, "Missing ident at end of declaration sequence!");
+    if (defName != m_Lexer->GetText()) throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Inconsitant name of definition Sequence!");
+    m_Lexer->Advance();
+    if (m_Lexer->GetSymbol() == T_DOT) m_Lexer->Advance();
+
+    return ASTNode::MakeDeclarationNode(line, col, defName, left, right); 
+}
+
+// Rule: { CONST { ConstDeclaration [ '; ] } | TYPE { TypeDeclaration [ '; ] } | VAR { VariableDeclaration [ '; ] } | ProcedureHeading [ '; ] }
+std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence2() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    while (bool isLock = true) {
+        switch (m_Lexer->GetSymbol()) {
+            case T_CONST:
+                {
+                    m_Lexer->Advance();
+                    nodes->push_back(ParseConstDeclaration());
+                    if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                    while (bool isLock2 = true) {
+                        switch (m_Lexer->GetSymbol()) {
+                            case T_CONST:
+                            case T_TYPE:
+                            case T_VAR:
+                            case T_PROCEDURE:
+                            case T_PROC:
+                            case T_LEFTPAREN:
+                            case T_END:
+                                isLock2 = false;
+                                break;
+                            default:
+                                nodes->push_back(ParseConstDeclaration());
+                                if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                        }
+                    }
+                }
+                break;
+            case T_TYPE:
+                {
+                    m_Lexer->Advance();
+                    nodes->push_back(ParseTypeDeclaration());
+                    if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                    while (bool isLock2 = true) {
+                        switch (m_Lexer->GetSymbol()) {
+                            case T_CONST:
+                            case T_TYPE:
+                            case T_VAR:
+                            case T_PROCEDURE:
+                            case T_PROC:
+                            case T_LEFTPAREN:
+                            case T_END:
+                                isLock2 = false;
+                                break;
+                            default:
+                                nodes->push_back(ParseTypeDeclaration());
+                                if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                        }
+                    }
+                }
+                break;
+            case T_VAR:
+                {
+                    m_Lexer->Advance();
+                    nodes->push_back(ParseVariableDeclararation());
+                    if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                    while (bool isLock2 = true) {
+                        switch (m_Lexer->GetSymbol()) {
+                            case T_CONST:
+                            case T_TYPE:
+                            case T_VAR:
+                            case T_PROCEDURE:
+                            case T_PROC:
+                            case T_LEFTPAREN:
+                            case T_END:
+                                isLock2 = false;
+                                break;
+                            default:
+                                nodes->push_back(ParseVariableDeclararation());
+                                if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                        }
+                    }
+                }
+                break;
+            case T_PROCEDURE:
+            case T_PROC:
+            case T_LEFTPAREN:
+                nodes->push_back(ParseProcedureHeading());
+                if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+                break;
+            default:
+                isLock = false;
+        }
+    }
+
+    return ASTNode::MakeDeclarationSequence2Node(line, col, nodes); 
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

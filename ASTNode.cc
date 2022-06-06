@@ -32,3 +32,11 @@ std::shared_ptr<ASTNode> ASTNode::MakeModuleNode(
                     std::shared_ptr<ASTNode> right) {
                         return std::make_shared<ASTNode>(line, col);
                     }
+
+std::shared_ptr<ASTNode> ASTNode::MakeDeclarationSequence2Node(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
+    return std::make_shared<ASTNode>(line, col);   
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeDeclarationNode(unsigned int line, unsigned int col, std::string name, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);   
+}
