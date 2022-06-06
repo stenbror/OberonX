@@ -95,7 +95,6 @@ class Parser
         std::shared_ptr<ASTNode> ParseModule();
         std::shared_ptr<ASTNode> ParseImportList();
         std::shared_ptr<ASTNode> ParseImport();
-        std::shared_ptr<ASTNode> ParseImportPath();
         std::shared_ptr<ASTNode> ParseDefinition();
         std::shared_ptr<ASTNode> ParseDeclarationSequence2();
 

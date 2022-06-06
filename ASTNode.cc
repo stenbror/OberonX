@@ -44,3 +44,19 @@ std::shared_ptr<ASTNode> ASTNode::MakeDeclarationNode(unsigned int line, unsigne
 std::shared_ptr<ASTNode> ASTNode::MakeImportListNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col); 
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeImportAssignPathNode(unsigned int line, unsigned int col, std::string left, std::string right, std::string next, std::shared_ptr<ASTNode> last) {
+    return std::make_shared<ASTNode>(line, col); 
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeImportAssignNode(unsigned int line, unsigned int col, std::string left, std::string right, std::shared_ptr<ASTNode> next) {
+    return std::make_shared<ASTNode>(line, col); 
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeImportPathNode(unsigned int line, unsigned int col, std::string left, std::string right, std::shared_ptr<ASTNode> next) {
+    return std::make_shared<ASTNode>(line, col); 
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeImportNode(unsigned int line, unsigned int col, std::string left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col); 
+}

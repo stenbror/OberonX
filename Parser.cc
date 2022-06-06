@@ -230,7 +230,7 @@ std::shared_ptr<ASTNode> Parser::ParseModule() {
     return ASTNode::MakeModuleNode(line, col, moduleText, typeParams, nodes, block); 
 }
 
-// Rule: 'IMPORT' Import { [ ', '  Import ] } [ '; ] 
+// Rule: 'IMPORT' Import { [ ', '  Import ] } [ ';' ] 
 std::shared_ptr<ASTNode> Parser::ParseImportList() { 
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     m_Lexer->Advance(); // 'IMPORT'
@@ -247,13 +247,46 @@ std::shared_ptr<ASTNode> Parser::ParseImportList() {
 
 // Rule:
 std::shared_ptr<ASTNode> Parser::ParseImport() { 
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    CheckSymbol(T_IDENT, "Expecting name of 'IMPORT' statement!");
+    auto queryText = m_Lexer->GetText();
+    m_Lexer->Advance();
+    if (m_Lexer->GetSymbol() == T_ASSIGN) {
+        auto left = queryText;
+        m_Lexer->Advance();
+        CheckSymbol(T_IDENT, "Expecting name literal after ':=' in import Statement!");
+        queryText = m_Lexer->GetText();
+        m_Lexer->Advance();
+        auto right = queryText;
+        if (m_Lexer->GetSymbol() == T_DOT) {
+            m_Lexer->Advance();
+            CheckSymbol(T_IDENT, "Expecting name literal after '.' in import Statement!");
+            auto next = m_Lexer->GetText();
+            m_Lexer->Advance();
+            auto last = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseTypeActuals() : nullptr;
+            return ASTNode::MakeImportAssignPathNode(line, col, left, right, next, last);
+        }
+        else {
+            auto next = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseTypeActuals() : nullptr;
+            return ASTNode::MakeImportAssignNode(line, col, left, right, next);
+        }
+    }
+    else if (m_Lexer->GetSymbol() == T_DOT) { // ImportPath
+        auto left = queryText;
+        m_Lexer->Advance();
+        CheckSymbol(T_IDENT, "Expecting name literal after '.' in import Statement!");
+        auto right = m_Lexer->GetText();
+        m_Lexer->Advance();
+        auto next = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseTypeActuals() : nullptr;
+        return ASTNode::MakeImportPathNode(line, col, left, right, next);
+    }
+    else {
+        auto left = queryText;
+        auto right = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseTypeActuals() : nullptr;
+        return ASTNode::MakeImportNode(line, col, left, right);
+    }
 }
 
-// Rule:
-std::shared_ptr<ASTNode> Parser::ParseImportPath() { 
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
-}
 
 // Rule: 'DEFINITION' Ident [ ';' ] [ ImportList ] DeclarationSequence2 'END' Ident [ '.' ]
 std::shared_ptr<ASTNode> Parser::ParseDefinition() { 
