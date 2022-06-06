@@ -230,9 +230,30 @@ std::shared_ptr<ASTNode> Parser::ParseModule() {
     return ASTNode::MakeModuleNode(line, col, moduleText, typeParams, nodes, block); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseImportList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseImport() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseImportPath() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'IMPORT' Import { [ ', '  Import ] } [ '; ] 
+std::shared_ptr<ASTNode> Parser::ParseImportList() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance(); // 'IMPORT'
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseImport());
+    while (m_Lexer->GetSymbol() == T_COMMA) {
+        m_Lexer->Advance();
+        nodes->push_back(ParseImport());
+    }
+    if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+
+    return ASTNode::MakeImportListNode(line, col, nodes); 
+}
+
+// Rule:
+std::shared_ptr<ASTNode> Parser::ParseImport() { 
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
+
+// Rule:
+std::shared_ptr<ASTNode> Parser::ParseImportPath() { 
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
 
 // Rule: 'DEFINITION' Ident [ ';' ] [ ImportList ] DeclarationSequence2 'END' Ident [ '.' ]
 std::shared_ptr<ASTNode> Parser::ParseDefinition() { 
