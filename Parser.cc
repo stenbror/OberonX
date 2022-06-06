@@ -186,7 +186,49 @@ std::shared_ptr<ASTNode> Parser::ParseFormalParameters() { return std::make_shar
 std::shared_ptr<ASTNode> Parser::ParseReturnType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFPSection() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFormalType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseModule() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: 'MODULE' Ident [ TypeParams ] [ ';' ] { ImportSequence | DeclarationSequence } [ 'BEGIN' StatementSequence ] 'END' Ident [ '.' ]
+std::shared_ptr<ASTNode> Parser::ParseModule() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance(); // 'MODULE'
+    CheckSymbol(T_IDENT, "Name of module is missing!");
+    auto moduleText = m_Lexer->GetText();
+    m_Lexer->Advance();
+    auto typeParams = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseTypeParams() : nullptr;
+    if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance(); // Optional ';'
+
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    while (bool isLock = true) {
+        switch (m_Lexer->GetSymbol()) {
+            case T_IMPORT:  nodes->push_back(ParseImportList()); break;
+            case T_CONST:
+            case T_TYPE:
+            case T_VAR:
+            case T_PROCEDURE:
+            case T_PROC:
+                nodes->push_back(ParseDeclarationSequence());
+                break;
+            default:    isLock = false;
+        }
+    }
+
+    std::shared_ptr<ASTNode> block = nullptr;
+    if (m_Lexer->GetSymbol() == T_BEGIN) {
+        m_Lexer->Advance();
+        block = ParseStatementSequence();
+    }
+
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of module!");
+    CheckSymbol(T_IDENT, "Missing module name at end of module!");
+    if (moduleText != m_Lexer->GetText()) throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Module name is inconsistant in module!");
+    m_Lexer->Advance();
+
+    if (m_Lexer->GetSymbol() == T_DOT) m_Lexer->Advance(); // optional '.' at end of module
+    if (m_Lexer->GetSymbol() != T_EOF) throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Expecting End of file!");
+
+    return ASTNode::MakeModuleNode(line, col, moduleText, typeParams, nodes, block); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseImportList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseImport() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseImportPath() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

@@ -1,6 +1,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 
 #pragma once
@@ -16,6 +17,12 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeQualidentNode(unsigned int line, unsigned int col, std::string text1, std::string text2);
         static std::shared_ptr<ASTNode> MakeAssignmentNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeProcedureCallNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeModuleNode(
+                    unsigned int line, 
+                    unsigned int col, 
+                    std::string moduleText, std::shared_ptr<ASTNode> left, 
+                    std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes, 
+                    std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;

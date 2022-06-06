@@ -23,3 +23,12 @@ std::shared_ptr<ASTNode> ASTNode::MakeAssignmentNode(unsigned int line, unsigned
 std::shared_ptr<ASTNode> ASTNode::MakeProcedureCallNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeModuleNode(
+                    unsigned int line, 
+                    unsigned int col, 
+                    std::string moduleText, std::shared_ptr<ASTNode> left, 
+                    std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes, 
+                    std::shared_ptr<ASTNode> right) {
+                        return std::make_shared<ASTNode>(line, col);
+                    }
