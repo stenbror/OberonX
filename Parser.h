@@ -63,8 +63,8 @@ class Parser
         std::shared_ptr<ASTNode> ParseElement();
         std::shared_ptr<ASTNode> ParseActualParameters();
         std::shared_ptr<ASTNode> ParseStatement();
-        std::shared_ptr<ASTNode> ParseAssignment();
-        std::shared_ptr<ASTNode> ParseProcedureCall();
+        std::shared_ptr<ASTNode> ParseAssignment(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left);
+        std::shared_ptr<ASTNode> ParseProcedureCall(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left);
         std::shared_ptr<ASTNode> ParseStatementSequence();
         std::shared_ptr<ASTNode> ParseIfStatement();
         std::shared_ptr<ASTNode> ParseElsifStatement();
@@ -87,7 +87,7 @@ class Parser
         std::shared_ptr<ASTNode> ParseReciver();
         std::shared_ptr<ASTNode> ParseProcedureBody();
         std::shared_ptr<ASTNode> ParseDeclarationSequence();
-        std::shared_ptr<ASTNode> ParsereturnStatement();
+        std::shared_ptr<ASTNode> ParseReturnStatement();
         std::shared_ptr<ASTNode> ParseFormalParameters();
         std::shared_ptr<ASTNode> ParseReturnType();
         std::shared_ptr<ASTNode> ParseFPSection();

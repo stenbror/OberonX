@@ -119,9 +119,46 @@ std::shared_ptr<ASTNode> Parser::ParseFactor() { return std::make_shared<ASTNode
 std::shared_ptr<ASTNode> Parser::ParseSet() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseActualParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseAssignment() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseProcedureCall() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: IfStatement | CaseStatement | WithStatement | LoopStatement | ExitStatement | ReturnStatement | WhileStatement | RepeatStatement | ForStatement | Assignment | ProcedureCall
+std::shared_ptr<ASTNode> Parser::ParseStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    switch (m_Lexer->GetSymbol()) {
+        case T_IF:      return ParseIfStatement();
+        case T_CASE:    return ParseCaseStatement();
+        case T_WITH:    return ParseWithStatement();
+        case T_LOOP:    return ParseLoopStatement();
+        case T_EXIT:    return ParseExitStatement();
+        case T_RETURN:  return ParseReturnStatement();
+        case T_WHILE:   return ParseWhileStatement();
+        case T_REPEAT:  return ParseRepeatStatement();
+        case T_FOR:     return ParseForStatement();
+        case T_IDENT:
+            {
+                auto left = ParseDesignator();
+                switch (m_Lexer->GetSymbol()) {
+                    case T_ASSIGN:      return ParseAssignment(line, col, left);
+                    case T_LEFTPAREN:   return ParseProcedureCall(line, col, left);
+                    default:    return left;
+                }
+            }
+        default:    throw SyntaxError(line, col, "Expecting statement!");
+    }
+}
+
+// Rule: Designator ':=' Expression
+std::shared_ptr<ASTNode> Parser::ParseAssignment(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left) { 
+    m_Lexer->Advance();
+    auto right = ParseExpression();
+    return ASTNode::MakeAssignmentNode(line, col, left, right);
+}
+
+// Rule: Designator [ActualParameters ]
+std::shared_ptr<ASTNode> Parser::ParseProcedureCall(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left) {
+    auto right = ParseActualParameters();
+    return ASTNode::MakeProcedureCallNode(line, col, left, right);
+}
+
 std::shared_ptr<ASTNode> Parser::ParseStatementSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseIfStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElsifStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
@@ -144,7 +181,7 @@ std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { return std::make_shar
 std::shared_ptr<ASTNode> Parser::ParseReciver() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureBody() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParsereturnStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+std::shared_ptr<ASTNode> Parser::ParseReturnStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFormalParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseReturnType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFPSection() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
