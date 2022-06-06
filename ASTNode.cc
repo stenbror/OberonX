@@ -7,3 +7,11 @@ ASTNode::ASTNode(unsigned int line, unsigned col) {
 std::shared_ptr<ASTNode> ASTNode::MakeIdentDefNode(unsigned int line, unsigned int col, std::string text, bool isreadOnlyExport, bool isExport) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeIdentNode(unsigned int line, unsigned int col, std::string text) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeQualidentNode(unsigned int line, unsigned int col, std::string text1, std::string text2) {
+    return std::make_shared<ASTNode>(line, col);
+}

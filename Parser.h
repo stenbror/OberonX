@@ -3,6 +3,20 @@
 #include "ASTNode.h"
 
 #include <memory>
+#include <string>
+#include <sstream>
+
+
+class SyntaxError {
+   public:
+        SyntaxError(unsigned int line, unsigned int col, std::string text);
+        std::string GetExceptionDetails();
+
+    private:
+        unsigned int m_Line;
+        unsigned int m_Col;
+        std::string m_Text;
+};
 
 class Parser
 {
