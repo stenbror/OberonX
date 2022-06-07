@@ -108,8 +108,64 @@ std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make
 std::shared_ptr<ASTNode> Parser::ParseDesignator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseSelector() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseExpList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseExpression() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseRelation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: SimpleExpression [ ( '<' | '<=' | '=' | '>=' | '>' | '#' | 'IN' | 'IS' ) SimpleExpression ]
+std::shared_ptr<ASTNode> Parser::ParseExpression() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseSimpleExpression();
+    switch (m_Lexer->GetSymbol()) {
+        case T_LESS:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeLessCompareNode(line, col, left, right);
+            }
+        case T_LESSEQUAL:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeLessEqualCompareNode(line, col, left, right);
+            }
+        case T_EQUAL:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeEqualCompareNode(line, col, left, right);
+            }
+        case T_GREATER:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeGreaterCompareNode(line, col, left, right);
+            }
+        case T_GREATEREQUAL:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeGreaterEqualCompareNode(line, col, left, right);
+            }
+        case T_HASH:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeNotEqualCompareNode(line, col, left, right);
+            }
+        case T_IN:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeInCompareNode(line, col, left, right);
+            }
+        case T_IS:
+            {
+                m_Lexer->Advance();
+                auto right = ParseSimpleExpression();
+                return ASTNode::MakeIsCompareNode(line, col, left, right);
+            }
+        default:    return left;
+    }
+}
+
 std::shared_ptr<ASTNode> Parser::ParseSimpleExpression() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseAddOperator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseTerm() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
