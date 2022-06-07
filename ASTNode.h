@@ -48,6 +48,13 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeDivNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeModNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeAndNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeLiteralNumberNode(unsigned int line, unsigned int col, std::string text);
+        static std::shared_ptr<ASTNode> MakeLiteralStringNode(unsigned int line, unsigned int col, std::string text);
+        static std::shared_ptr<ASTNode> MakeLiteralHexStringNode(unsigned int line, unsigned int col, std::string text);
+        static std::shared_ptr<ASTNode> MakeLiteralHexCharNode(unsigned int line, unsigned int col, std::string text);
+        static std::shared_ptr<ASTNode> MakeLiteralNilNode(unsigned int line, unsigned int col);
+        static std::shared_ptr<ASTNode> MakeLiteralTrueNode(unsigned int line, unsigned int col);
+        static std::shared_ptr<ASTNode> MakeLiteralFalseNode(unsigned int line, unsigned int col);
 
     private:
         unsigned int m_Line;

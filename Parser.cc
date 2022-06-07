@@ -262,8 +262,55 @@ std::shared_ptr<ASTNode> Parser::ParseTerm() {
     return left; 
 }
 
+// Rule: Number | String | HexString | HexChar | 'NIL' | 'TRUE' | 'FALSE' | Set
+std::shared_ptr<ASTNode> Parser::ParseLiteral() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    switch (m_Lexer->GetSymbol()) {
+        case T_NUMBER:
+            {
+                auto text = m_Lexer->GetText();
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralNumberNode(line, col, text);
+            }
+        case T_STRING:
+            {
+                auto text = m_Lexer->GetText();
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralStringNode(line, col, text);
+            }
+        case T_HEX_STRING:
+            {
+                auto text = m_Lexer->GetText();
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralHexStringNode(line, col, text);
+            }
+        case T_HEX_CHAR:
+        {
+                auto text = m_Lexer->GetText();
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralHexCharNode(line, col, text);
+            }
+        case T_NIL:
+            {
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralNilNode(line, col);
+            }
+        case T_TRUE:
+            {
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralTrueNode(line, col);
+            }
+        case T_FALSE:
+            {
+                m_Lexer->Advance();
+                return ASTNode::MakeLiteralFalseNode(line, col);
+            }
+        case T_LEFTCURLY:
+                return ParseSet();
+        default:    throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Illegal literal!");
+    }
+}
 
-std::shared_ptr<ASTNode> Parser::ParseLiteral() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFactor() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseSet() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

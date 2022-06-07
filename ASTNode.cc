@@ -132,3 +132,31 @@ std::shared_ptr<ASTNode> ASTNode::MakeModNode(unsigned int line, unsigned int co
 std::shared_ptr<ASTNode> ASTNode::MakeAndNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralNumberNode(unsigned int line, unsigned int col, std::string text) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralStringNode(unsigned int line, unsigned int col, std::string text) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralHexStringNode(unsigned int line, unsigned int col, std::string text) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralHexCharNode(unsigned int line, unsigned int col, std::string text) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralNilNode(unsigned int line, unsigned int col) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralTrueNode(unsigned int line, unsigned int col) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeLiteralFalseNode(unsigned int line, unsigned int col) {
+    return std::make_shared<ASTNode>(line, col);
+}
