@@ -311,7 +311,34 @@ std::shared_ptr<ASTNode> Parser::ParseLiteral() {
     }
 }
 
-std::shared_ptr<ASTNode> Parser::ParseFactor() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Literal | Designator [ ActualParameters ] | '(' Expression ')' | '~' Factor
+std::shared_ptr<ASTNode> Parser::ParseFactor() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    switch (m_Lexer->GetSymbol()) {
+        case T_IDENT:
+            {
+                auto left = ParseDesignator();
+                if (m_Lexer->GetSymbol() != T_LEFTPAREN) return left;
+                auto right = ParseActualParameters();
+                return ASTNode::MakeCallNode(line, col, left, right);
+            }
+        case T_LEFTPAREN:
+            {
+                m_Lexer->Advance();
+                auto right = ParseExpression();
+                CheckSymbolAndAdvance(T_RIGHTPAREN, "Expecting ')' in expression!");
+                return right;
+            }
+        case T_TILDE:
+            {
+                m_Lexer->Advance();
+                auto right = ParseFactor();
+                return ASTNode::MakeBitInvertNode(line, col, right);
+            }
+        default:    return ParseLiteral();
+    } 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseSet() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseActualParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

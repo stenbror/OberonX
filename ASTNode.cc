@@ -160,3 +160,11 @@ std::shared_ptr<ASTNode> ASTNode::MakeLiteralTrueNode(unsigned int line, unsigne
 std::shared_ptr<ASTNode> ASTNode::MakeLiteralFalseNode(unsigned int line, unsigned int col) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeCallNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeBitInvertNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
