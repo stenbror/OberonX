@@ -57,6 +57,7 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeLiteralFalseNode(unsigned int line, unsigned int col);
         static std::shared_ptr<ASTNode> MakeCallNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeBitInvertNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeExpressionListNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
 
     private:
         unsigned int m_Line;

@@ -107,7 +107,19 @@ std::shared_ptr<ASTNode> Parser::ParseProcedureType() { return std::make_shared<
 std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseDesignator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseSelector() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseExpList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: Expression { ',' Expression }
+std::shared_ptr<ASTNode> Parser::ParseExpList() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseExpression());
+    while (m_Lexer->GetSymbol() == T_COMMA) {
+        m_Lexer->Advance();
+        nodes->push_back(ParseExpression());
+    }
+
+    return ASTNode::MakeExpressionListNode(line, col, nodes); 
+}
 
 // Rule: SimpleExpression [ ( '<' | '<=' | '=' | '>=' | '>' | '#' | 'IN' | 'IS' ) SimpleExpression ]
 std::shared_ptr<ASTNode> Parser::ParseExpression() { 
