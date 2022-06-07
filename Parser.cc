@@ -166,9 +166,61 @@ std::shared_ptr<ASTNode> Parser::ParseExpression() {
     }
 }
 
-std::shared_ptr<ASTNode> Parser::ParseSimpleExpression() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseAddOperator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseTerm() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: [ '+' | '-' ] Term { ( '+' | '-' | 'OR' ) Term }
+std::shared_ptr<ASTNode> Parser::ParseSimpleExpression() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    std::shared_ptr<ASTNode> left = nullptr;
+
+    if (m_Lexer->GetSymbol() == T_PLUS || m_Lexer->GetSymbol() == T_MINUS) {
+        if (m_Lexer->GetSymbol() == T_PLUS) {
+            m_Lexer->Advance();
+            auto right = ParseTerm();
+            left = ASTNode::MakeUnaryPlusNode(line, col, right);
+        }
+        else {
+            m_Lexer->Advance();
+            auto right = ParseTerm();
+            left = ASTNode::MakeUnaryMinusNode(line, col, right);
+        }
+    }
+    else {
+        left = ParseTerm();
+    }
+
+    while (m_Lexer->GetSymbol() == T_PLUS || m_Lexer->GetSymbol() == T_MINUS || m_Lexer->GetSymbol() == T_OR) {
+        switch (m_Lexer->GetSymbol()) {
+            case T_PLUS:
+                {
+                    m_Lexer->Advance();
+                    auto right1 = ParseTerm();
+                    left = ASTNode::MakePlusNode(line, col, left, right1);
+                }
+                break;
+            case T_MINUS:
+                {
+                    m_Lexer->Advance();
+                    auto right2 = ParseTerm();
+                    left = ASTNode::MakeOrNode(line, col, left, right2);
+                }
+                break;
+            default:
+                {
+                    m_Lexer->Advance();
+                    auto right3 = ParseTerm();
+                    left = ASTNode::MakeOrNode(line, col, left, right3);
+                }
+                break;
+        }
+    }
+
+    return left;
+}
+
+// Rule:
+std::shared_ptr<ASTNode> Parser::ParseTerm() { 
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseMulOperator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLiteral() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFactor() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

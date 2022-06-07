@@ -52,9 +52,7 @@ class Parser
         std::shared_ptr<ASTNode> ParseSelector();
         std::shared_ptr<ASTNode> ParseExpList();
         std::shared_ptr<ASTNode> ParseExpression();
-        std::shared_ptr<ASTNode> ParseRelation();
         std::shared_ptr<ASTNode> ParseSimpleExpression();
-        std::shared_ptr<ASTNode> ParseAddOperator();
         std::shared_ptr<ASTNode> ParseTerm();
         std::shared_ptr<ASTNode> ParseMulOperator();
         std::shared_ptr<ASTNode> ParseLiteral();

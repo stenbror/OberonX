@@ -92,3 +92,23 @@ std::shared_ptr<ASTNode> ASTNode::MakeInCompareNode(unsigned int line, unsigned 
 std::shared_ptr<ASTNode> ASTNode::MakeIsCompareNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeUnaryPlusNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeUnaryMinusNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakePlusNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeMinusNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeOrNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
