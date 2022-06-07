@@ -394,7 +394,38 @@ std::shared_ptr<ASTNode> Parser::ParseProcedureCall(unsigned int line, unsigned 
     return ASTNode::MakeProcedureCallNode(line, col, left, right);
 }
 
-std::shared_ptr<ASTNode> Parser::ParseStatementSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Statement { [ ';' ] Statement }
+std::shared_ptr<ASTNode> Parser::ParseStatementSequence() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseStatement());
+    while (bool isLock = true) {
+        if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance(); // Optional semicolon between statements!
+        switch (m_Lexer->GetSymbol()) {
+            case T_IF:
+            case T_CASE:
+            case T_WITH:
+            case T_LOOP:
+            case T_EXIT:
+            case T_RETURN:
+            case T_WHILE:
+            case T_REPEAT:
+            case T_FOR:
+            case T_IDENT:
+            case T_PROCEDURE:
+            case T_PROC:
+            case T_LEFTPAREN:
+                nodes->push_back(ParseStatement());
+                break;
+            case T_SEMICOLON:   throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Unexpected ';' !");
+            default:    isLock = false;
+        }
+    }
+
+    return ASTNode::MakeStatementSequenceNode(line, col, nodes);
+
+}
+
 std::shared_ptr<ASTNode> Parser::ParseIfStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElsifStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
