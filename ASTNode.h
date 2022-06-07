@@ -43,11 +43,11 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakePlusNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeMinusNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeOrNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
-        static std::shared_ptr<ASTNode> MakeMulNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
-        static std::shared_ptr<ASTNode> MakeSlashNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
-        static std::shared_ptr<ASTNode> MakeDivNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
-        static std::shared_ptr<ASTNode> MakeModNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
-        static std::shared_ptr<ASTNode> MakeAndNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeMulNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeSlashNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeDivNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeModNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeAndNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;
