@@ -216,12 +216,53 @@ std::shared_ptr<ASTNode> Parser::ParseSimpleExpression() {
     return left;
 }
 
-// Rule:
+// Rule: Factor { ( '*' | '/' | 'DIV' | 'MOD' | '&' ) Factor }
 std::shared_ptr<ASTNode> Parser::ParseTerm() { 
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseFactor();
+    while (m_Lexer->GetSymbol() == T_MUL || m_Lexer->GetSymbol() == T_SLASH || m_Lexer->GetSymbol() == T_DIV || m_Lexer->GetSymbol() == T_MOD || m_Lexer->GetSymbol() == T_AND) {
+        switch (m_Lexer->GetSymbol()) {
+            case T_MUL:
+                {
+                    m_Lexer->Advance();
+                    auto right = ParseFactor();
+                    left = ASTNode::MakeMulNode(line, col, left, right);
+                }
+                break;
+            case T_SLASH:
+                {
+                    m_Lexer->Advance();
+                    auto right = ParseFactor();
+                    left = ASTNode::MakeSlashNode(line, col, left, right);
+                }
+                break;
+            case T_DIV:
+                {
+                    m_Lexer->Advance();
+                    auto right = ParseFactor();
+                    left = ASTNode::MakeDivNode(line, col, left, right);
+                }
+                break;
+            case T_MOD:
+                {
+                    m_Lexer->Advance();
+                    auto right = ParseFactor();
+                    left = ASTNode::MakeModNode(line, col, left, right);
+                }
+                break;
+            default:
+                {
+                    m_Lexer->Advance();
+                    auto right = ParseFactor();
+                    left = ASTNode::MakeAndNode(line, col, left, right);
+                }
+                break;
+        }
+    }
+    return left; 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseMulOperator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
 std::shared_ptr<ASTNode> Parser::ParseLiteral() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFactor() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseSet() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

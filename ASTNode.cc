@@ -112,3 +112,23 @@ std::shared_ptr<ASTNode> ASTNode::MakeMinusNode(unsigned int line, unsigned int 
 std::shared_ptr<ASTNode> ASTNode::MakeOrNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeMulNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeSlashNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeDivNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeModNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeAndNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
