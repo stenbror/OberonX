@@ -454,7 +454,7 @@ std::shared_ptr<ASTNode> Parser::ParseElseStatement() {
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     m_Lexer->Advance();
     auto right = ParseStatementSequence();
-    return ASTNode::MakeElseNode(line, col, right); 
+    return ASTNode::MakeElseStatementNode(line, col, right); 
 }
 
 std::shared_ptr<ASTNode> Parser::ParseCaseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
