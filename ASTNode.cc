@@ -202,3 +202,12 @@ std::shared_ptr<ASTNode> ASTNode::MakeWhileStatementNode(
                                             std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
                                                 return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeCaseStatementNode(
+                                            unsigned int line, 
+                                            unsigned int col, 
+                                            std::shared_ptr<ASTNode> left, 
+                                            std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes, 
+                                            std::shared_ptr<ASTNode> right) {
+                                                return std::make_shared<ASTNode>(line, col);
+}

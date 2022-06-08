@@ -457,7 +457,23 @@ std::shared_ptr<ASTNode> Parser::ParseElseStatement() {
     return ASTNode::MakeElseStatementNode(line, col, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseCaseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'CASE' Expression 'OF' Case { '|' Case } [ 'ELSE' StatementSequence ] 'END'
+std::shared_ptr<ASTNode> Parser::ParseCaseStatement() {
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto left = ParseExpression();
+    CheckSymbolAndAdvance(T_OF, "Expecting 'OF' in 'CASE' Statement!");
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseCase());
+    while (m_Lexer->GetSymbol() == T_BAR) {
+        m_Lexer->Advance();
+        nodes->push_back(ParseCase());
+    }
+    auto right = m_Lexer->GetSymbol() == T_ELSE ? ParseElseStatement() : nullptr;
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of 'CASE' Statement!");
+    return ASTNode::MakeCaseStatementNode(line, col, left, nodes, right);
+}
+
 std::shared_ptr<ASTNode> Parser::ParseCase() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabelRange() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

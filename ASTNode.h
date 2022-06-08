@@ -74,6 +74,12 @@ class ASTNode
                                             std::shared_ptr<ASTNode> left, 
                                             std::shared_ptr<ASTNode> right, 
                                             std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
+        static std::shared_ptr<ASTNode> MakeCaseStatementNode(
+                                            unsigned int line, 
+                                            unsigned int col, 
+                                            std::shared_ptr<ASTNode> left, 
+                                            std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes, 
+                                            std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;
