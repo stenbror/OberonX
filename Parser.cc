@@ -423,10 +423,22 @@ std::shared_ptr<ASTNode> Parser::ParseStatementSequence() {
     }
 
     return ASTNode::MakeStatementSequenceNode(line, col, nodes);
-
 }
 
-std::shared_ptr<ASTNode> Parser::ParseIfStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'IF' Expression 'THEN' StatementSequence { 'ELSIF' Expression 'THEN' StatementSequence } [ 'ELSE' StatementSequence ] 'END'
+std::shared_ptr<ASTNode> Parser::ParseIfStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto left = ParseExpression();
+    CheckSymbolAndAdvance(T_THEN, "Expecting 'THEN' in 'IF' statement!");
+    auto right = ParseStatementSequence();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>(); // 'ELSIF'
+    while (m_Lexer->GetSymbol() == T_ELSIF) nodes->push_back(ParseElsifStatement());
+    auto next = m_Lexer->GetSymbol() == T_ELSE ? ParseElseStatement() : nullptr;
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of 'IF' statement!");
+    return ASTNode::MakeIfStatementNode(line, col, left, right, nodes, next); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseElsifStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseElseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseCaseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
@@ -435,7 +447,7 @@ std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { return std::make_shared<
 std::shared_ptr<ASTNode> Parser::ParseLabelRange() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabel() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseWhileStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseElsifStatement2() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+std::shared_ptr<ASTNode> Parser::ParseElseStatement2() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseRepeatStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseForStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseWithStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
