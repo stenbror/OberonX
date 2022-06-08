@@ -483,7 +483,18 @@ std::shared_ptr<ASTNode> Parser::ParseCase() {
     return ASTNode::MakeCaseStatement(line, col, left, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: CaseLabel { ',' Case Label }
+std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseLabelRange());
+    while (m_Lexer->GetSymbol() == T_COMMA) {
+        m_Lexer->Advance();
+        nodes->push_back(ParseLabelRange());
+    }
+    return ASTNode::MakeCaseLabelRangeNode(line, col, nodes); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseLabelRange() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabel() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
