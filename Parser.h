@@ -70,7 +70,6 @@ class Parser
         std::shared_ptr<ASTNode> ParseCase();
         std::shared_ptr<ASTNode> ParseCaseLabelList();
         std::shared_ptr<ASTNode> ParseLabelRange();
-        std::shared_ptr<ASTNode> ParseLabel();
         std::shared_ptr<ASTNode> ParseWhileStatement();
         std::shared_ptr<ASTNode> ParseElsifStatement2();
         std::shared_ptr<ASTNode> ParseRepeatStatement();

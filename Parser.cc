@@ -495,8 +495,17 @@ std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() {
     return ASTNode::MakeCaseLabelRangeNode(line, col, nodes); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseLabelRange() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseLabel() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Label [ '..' Label ]
+std::shared_ptr<ASTNode> Parser::ParseLabelRange() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseConstExpression();
+    if (m_Lexer->GetSymbol() == T_UPTO) {
+        m_Lexer->Advance();
+        auto right = ParseConstExpression();
+        return ASTNode::MakeLabelRangeNode(line, col, left, right);
+    }
+    return left; 
+}
 
 // Rule: 'WHILE' Expression 'DO' StatementSequence { 'ELSIF' Expression 'DO' StatementSequence } 'END'
 std::shared_ptr<ASTNode> Parser::ParseWhileStatement() { 

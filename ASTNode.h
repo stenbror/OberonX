@@ -82,6 +82,7 @@ class ASTNode
                                             std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeCaseStatement(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeCaseLabelRangeNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
+        static std::shared_ptr<ASTNode> MakeLabelRangeNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;
