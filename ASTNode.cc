@@ -211,3 +211,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeCaseStatementNode(
                                             std::shared_ptr<ASTNode> right) {
                                                 return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeCaseStatement(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}

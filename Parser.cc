@@ -474,7 +474,15 @@ std::shared_ptr<ASTNode> Parser::ParseCaseStatement() {
     return ASTNode::MakeCaseStatementNode(line, col, left, nodes, right);
 }
 
-std::shared_ptr<ASTNode> Parser::ParseCase() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: [ CaseLabel ':' StatementSequence ]
+std::shared_ptr<ASTNode> Parser::ParseCase() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseCaseLabelList();
+    CheckSymbolAndAdvance(T_COLON, "Expecting ':' in 'CASE' Statement!");
+    auto right = ParseStatementSequence();
+    return ASTNode::MakeCaseStatement(line, col, left, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabelRange() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabel() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
