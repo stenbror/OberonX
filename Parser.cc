@@ -536,11 +536,32 @@ std::shared_ptr<ASTNode> Parser::ParseRepeatStatement() {
     m_Lexer->Advance();
     auto left = ParseStatementSequence();
     CheckSymbolAndAdvance(T_UNTIL, "Expected 'UNTIL'!");
-    auto rigth = ParseExpression();
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+    auto right = ParseExpression();
+    return ASTNode::MakeRepeatStatementNode(line, col, left, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseForStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'FOR' ident ':=' Expression 'TO' Expression [ 'BY' ConstExpression ] 'DO' StatementSequence 'END' 
+std::shared_ptr<ASTNode> Parser::ParseForStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    CheckSymbol(T_IDENT, "Expecting literal name in 'FOR' Statement!");
+    auto literalText = m_Lexer->GetText();
+    m_Lexer->Advance();
+    CheckSymbolAndAdvance(T_ASSIGN, "Expecting ':=' in 'FOR' Statement!");
+    auto left = ParseExpression(); 
+    CheckSymbolAndAdvance(T_TO, "Missing 'TO' in 'FOR' Statement!");
+    auto right = ParseExpression();
+    std::shared_ptr<ASTNode> next = nullptr;
+    if (m_Lexer->GetSymbol() == T_BY) {
+        m_Lexer->Advance();
+        next = ParseConstExpression();
+    }
+    CheckSymbolAndAdvance(T_DO, "Expecting 'DO' in 'FOR' Statement!");
+    auto seq = ParseStatementSequence();
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' in 'FOR' Statement!");
+    return ASTNode::MakeForStatementNode(line, col, literalText, left, right, next, seq); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseWithStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseGuard() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLoopStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
