@@ -444,7 +444,7 @@ std::shared_ptr<ASTNode> Parser::ParseElsifStatement() {
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     m_Lexer->Advance();
     auto left = ParseExpression();
-    CheckSymbolAndAdvance(T_THEN, "Expecting 'THEN' in 'IF' statement!");
+    CheckSymbolAndAdvance(T_THEN, "Expecting 'THEN' in 'ELSIF' statement!");
     auto right = ParseStatementSequence();
     return ASTNode::MakeElsifStatementNode(line, col, left, right);
 }
@@ -462,8 +462,30 @@ std::shared_ptr<ASTNode> Parser::ParseCase() { return std::make_shared<ASTNode>(
 std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabelRange() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLabel() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseWhileStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseElseStatement2() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: 'WHILE' Expression 'DO' StatementSequence { 'ELSIF' Expression 'DO' StatementSequence } 'END'
+std::shared_ptr<ASTNode> Parser::ParseWhileStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto left = ParseExpression();
+    CheckSymbolAndAdvance(T_DO, "Expecting 'DO' in 'WHILE' statement!");
+    auto right = ParseStatementSequence();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>(); // 'ELSIF'
+    while (m_Lexer->GetSymbol() == T_ELSIF) nodes->push_back(ParseElsifStatement2());
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of 'WHILE' statement!");
+    return ASTNode::MakeWhileStatementNode(line, col, left, right, nodes); 
+}
+
+// Rule: 'ELSIF' Expression 'DO' StatementSequence
+std::shared_ptr<ASTNode> Parser::ParseElsifStatement2() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto left = ParseExpression();
+    CheckSymbolAndAdvance(T_DO, "Expecting 'DO' in 'ELSIF' statement!");
+    auto right = ParseStatementSequence();
+    return ASTNode::MakeElsifStatementNode(line, col, left, right);
+}
+
 std::shared_ptr<ASTNode> Parser::ParseRepeatStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseForStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseWithStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
