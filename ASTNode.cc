@@ -186,3 +186,10 @@ std::shared_ptr<ASTNode> ASTNode::MakeIfStatementNode(
                                         std::shared_ptr<ASTNode> next) {
                                                 return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeElsifStatementNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+     return std::make_shared<ASTNode>(line, col);
+}
+std::shared_ptr<ASTNode> ASTNode::MakeElseStatementNode(nsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+     return std::make_shared<ASTNode>(line, col);
+}

@@ -439,8 +439,24 @@ std::shared_ptr<ASTNode> Parser::ParseIfStatement() {
     return ASTNode::MakeIfStatementNode(line, col, left, right, nodes, next); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseElsifStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseElseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'ELSIF' Expression 'THEN' StatementSequence
+std::shared_ptr<ASTNode> Parser::ParseElsifStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto left = ParseExpression();
+    CheckSymbolAndAdvance(T_THEN, "Expecting 'THEN' in 'IF' statement!");
+    auto right = ParseStatementSequence();
+    return ASTNode::MakeElsifStatementNode(line, col, left, right);
+}
+
+// Rule: 'ELSE' StatementSequence
+std::shared_ptr<ASTNode> Parser::ParseElseStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto right = ParseStatementSequence();
+    return ASTNode::MakeElseNode(line, col, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseCaseStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseCase() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseCaseLabelList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
