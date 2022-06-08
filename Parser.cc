@@ -530,7 +530,16 @@ std::shared_ptr<ASTNode> Parser::ParseElsifStatement2() {
     return ASTNode::MakeElsifStatementNode(line, col, left, right);
 }
 
-std::shared_ptr<ASTNode> Parser::ParseRepeatStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'REPEAT' StatementSequence 'UNTIL' Expression
+std::shared_ptr<ASTNode> Parser::ParseRepeatStatement() {
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto left = ParseStatementSequence();
+    CheckSymbolAndAdvance(T_UNTIL, "Expected 'UNTIL'!");
+    auto rigth = ParseExpression();
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseForStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseWithStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseGuard() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

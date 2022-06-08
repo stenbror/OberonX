@@ -223,3 +223,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeCaseLabelRangeNode(unsigned int line, unsi
 std::shared_ptr<ASTNode> ASTNode::MakeLabelRangeNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeRepeatStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
