@@ -101,7 +101,8 @@ class ASTNode
         static std::shared_ptr<ASTNode> GuardNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeLoopStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeExitStatementNode(unsigned int line, unsigned int col);
-        static std::shared_ptr<ASTNode> MakeReturnStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);        
+        static std::shared_ptr<ASTNode> MakeReturnStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeFormalParametersNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
 
     private:
         unsigned int m_Line;

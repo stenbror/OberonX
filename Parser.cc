@@ -630,7 +630,6 @@ std::shared_ptr<ASTNode> Parser::ParseReturnStatement() {
         case T_WHILE:
         case T_REPEAT:
         case T_FOR:
-        case T_IDENT:
         case T_PROCEDURE:
         case T_PROC:
         case T_LEFTPAREN:   break;
@@ -641,7 +640,20 @@ std::shared_ptr<ASTNode> Parser::ParseReturnStatement() {
     return ASTNode::MakeReturnStatementNode(line, col, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseFormalParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: '(' FPSection { [ ';' ] FPSection } ')'
+std::shared_ptr<ASTNode> Parser::ParseFormalParameters() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance(); // '(')
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseFPSection());
+    while (m_Lexer->GetSymbol() != T_RIGHTPAREN) {
+        if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+        nodes->push_back(ParseFPSection());
+    }
+    m_Lexer->Advance(); // ')'
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseReturnType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFPSection() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFormalType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
