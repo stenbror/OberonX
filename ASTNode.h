@@ -110,6 +110,7 @@ class ASTNode
                                             std::shared_ptr<ASTNode> right,
                                             bool isVar,
                                             bool isIn);
+        static std::shared_ptr<ASTNode> MakeReciverNode(unsigned int line, unsigned int col, std::string left, std::string right);
 
     private:
         unsigned int m_Line;

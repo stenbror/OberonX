@@ -277,3 +277,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeFPSectionNode(
                                             bool isIn) {
                                                 return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeReciverNode(unsigned int line, unsigned int col, std::string left, std::string right) {
+    return std::make_shared<ASTNode>(line, col);
+}

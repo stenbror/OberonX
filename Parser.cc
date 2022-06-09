@@ -609,7 +609,31 @@ std::shared_ptr<ASTNode> Parser::ParseExitStatement() {
 
 std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseReciver() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: '(' [ 'VAR' | 'IN' ] ident ':' ident ')'
+std::shared_ptr<ASTNode> Parser::ParseReciver() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance(); // '(')
+    bool isVar = false, isIn = false;
+    if (m_Lexer->GetSymbol() == T_VAR) {
+        m_Lexer->Advance();
+        isVar = true;
+    } 
+    else if (m_Lexer->GetSymbol() == T_IN) {
+        m_Lexer->Advance();
+        isIn = true;
+    }
+    CheckSymbol(T_IDENT, "Expecting name literal in reciver's first column!");
+    auto left = m_Lexer->GetText();
+    m_Lexer->Advance();
+    CheckSymbolAndAdvance(T_COLON, "Expecting ':' in reciver!");
+    auto right = m_Lexer->GetText();
+    m_Lexer->Advance();
+    CheckSymbol(T_IDENT, "Expecting name literal in reciver's first column!");
+    CheckSymbolAndAdvance(T_RIGHTPAREN, "Expecting ')' in reciver!");
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseProcedureBody() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
