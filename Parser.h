@@ -82,7 +82,7 @@ class Parser
         std::shared_ptr<ASTNode> ParseProcedureHeading();
         std::shared_ptr<ASTNode> ParseReciver();
         std::shared_ptr<ASTNode> ParseProcedureBody();
-        std::shared_ptr<ASTNode> ParseDeclarationSequence();
+        std::shared_ptr<ASTNode> ParseDeclarationSequence(bool isDefinition = true);
         std::shared_ptr<ASTNode> ParseReturnStatement();
         std::shared_ptr<ASTNode> ParseFormalParameters();
         std::shared_ptr<ASTNode> ParseReturnType();
@@ -92,7 +92,6 @@ class Parser
         std::shared_ptr<ASTNode> ParseImportList();
         std::shared_ptr<ASTNode> ParseImport();
         std::shared_ptr<ASTNode> ParseDefinition();
-        std::shared_ptr<ASTNode> ParseDeclarationSequence2();
 
         void CheckSymbol(TokenCode symbol, std::string msg);
         void CheckSymbolAndAdvance(TokenCode symbol, std::string msg);

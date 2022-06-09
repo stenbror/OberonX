@@ -663,8 +663,21 @@ std::shared_ptr<ASTNode> Parser::ParseReciver() {
     return ASTNode::MakeReciverNode(line, col, left, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseProcedureBody() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: DeclarationSequence [ 'BEGIN' StatementSequence | 'returnStatement [ ';' ] ]
+std::shared_ptr<ASTNode> Parser::ParseProcedureBody() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseDeclarationSequence(false);
+    std::shared_ptr<ASTNode> right = nullptr;
+    if (m_Lexer->GetSymbol() == T_BEGIN) {
+        m_Lexer->Advance();
+        right = ParseStatementSequence();
+    }
+    else {
+        right = ParseReturnStatement();
+        if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+    }
+    return ASTNode::MakeProcedureBodyNode(line, col, left, right); 
+}
 
 // Rule: 'RETURN' [ Expression ]
 std::shared_ptr<ASTNode> Parser::ParseReturnStatement() { 
@@ -852,7 +865,7 @@ std::shared_ptr<ASTNode> Parser::ParseDefinition() {
     auto defName = m_Lexer->GetText();
     m_Lexer->Advance();
     auto left = m_Lexer->GetSymbol() == T_IMPORT ? ParseImportList() : nullptr;
-    auto right = ParseDeclarationSequence2();
+    auto right = ParseDeclarationSequence();
     CheckSymbolAndAdvance(T_END, "Expecting 'END' in defintion!");
     CheckSymbol(T_IDENT, "Missing ident at end of declaration sequence!");
     if (defName != m_Lexer->GetText()) throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Inconsitant name of definition Sequence!");
@@ -863,7 +876,7 @@ std::shared_ptr<ASTNode> Parser::ParseDefinition() {
 }
 
 // Rule: { CONST { ConstDeclaration [ '; ] } | TYPE { TypeDeclaration [ '; ] } | VAR { VariableDeclaration [ '; ] } | ProcedureHeading [ '; ] }
-std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence2() { 
+std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence(bool isDefinition) { 
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
     while (bool isLock = true) {
