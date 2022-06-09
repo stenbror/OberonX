@@ -623,15 +623,19 @@ std::shared_ptr<ASTNode> Parser::ParseReciver() {
         m_Lexer->Advance();
         isIn = true;
     }
+   
     CheckSymbol(T_IDENT, "Expecting name literal in reciver's first column!");
     auto left = m_Lexer->GetText();
     m_Lexer->Advance();
+   
     CheckSymbolAndAdvance(T_COLON, "Expecting ':' in reciver!");
+   
+    CheckSymbol(T_IDENT, "Expecting name literal in reciver's first column!");
     auto right = m_Lexer->GetText();
     m_Lexer->Advance();
-    CheckSymbol(T_IDENT, "Expecting name literal in reciver's first column!");
+
     CheckSymbolAndAdvance(T_RIGHTPAREN, "Expecting ')' in reciver!");
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+    return ASTNode::MakeReciverNode(line, col, left, right); 
 }
 
 std::shared_ptr<ASTNode> Parser::ParseProcedureBody() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
