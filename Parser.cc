@@ -591,7 +591,15 @@ std::shared_ptr<ASTNode> Parser::ParseGuard() {
     return ASTNode::GuardNode(line, col, left, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseLoopStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'LOOP' StatementSequence 'END'
+std::shared_ptr<ASTNode> Parser::ParseLoopStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto right = ParseStatementSequence();
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of 'LOOP' Statement!");
+    return ASTNode::MakeLoopStatementNode(line, col, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseExitStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

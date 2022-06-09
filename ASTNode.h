@@ -99,6 +99,7 @@ class ASTNode
                                             std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> StatementBlockNodes,
                                             std::shared_ptr<ASTNode> elsePart);
         static std::shared_ptr<ASTNode> GuardNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeLoopStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
         
 
     private:
