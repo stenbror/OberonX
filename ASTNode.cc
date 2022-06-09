@@ -267,3 +267,13 @@ std::shared_ptr<ASTNode> ASTNode::MakeReturnStatementNode(unsigned int line, uns
 std::shared_ptr<ASTNode> ASTNode::MakeFormalParametersNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeFPSectionNode(
+                                            unsigned int line, 
+                                            unsigned int col, 
+                                            std::shared_ptr<std::vector<std::string>> nodes,
+                                            std::shared_ptr<ASTNode> right,
+                                            bool isVar,
+                                            bool isIn) {
+                                                return std::make_shared<ASTNode>(line, col);
+}

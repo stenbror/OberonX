@@ -103,6 +103,13 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeExitStatementNode(unsigned int line, unsigned int col);
         static std::shared_ptr<ASTNode> MakeReturnStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeFormalParametersNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
+        static std::shared_ptr<ASTNode> MakeFPSectionNode(
+                                            unsigned int line, 
+                                            unsigned int col, 
+                                            std::shared_ptr<std::vector<std::string>> nodes,
+                                            std::shared_ptr<ASTNode> right,
+                                            bool isVar,
+                                            bool isIn);
 
     private:
         unsigned int m_Line;

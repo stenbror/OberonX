@@ -659,7 +659,31 @@ std::shared_ptr<ASTNode> Parser::ParseReturnType() {
     return ParseType(); // Possible remove this rule later! 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseFPSection() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: [ 'VAR' | 'IN' ] ident { [ ',' ] ident } ':' FormalType
+std::shared_ptr<ASTNode> Parser::ParseFPSection() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    bool isVar = false, isIn = false;
+    if (m_Lexer->GetSymbol() == T_VAR) {
+        m_Lexer->Advance();
+        isVar = true;
+    }
+    else if (m_Lexer->GetSymbol() == T_IN) {
+        m_Lexer->Advance();
+        isIn = true;
+    }
+    auto nodes = std::make_shared<std::vector<std::string>>();
+    nodes->push_back(m_Lexer->GetText());
+    m_Lexer->Advance();
+    while (m_Lexer->GetSymbol() != T_COLON) {
+        if (m_Lexer->GetSymbol() == T_COMMA) m_Lexer->Advance();
+        CheckSymbol(T_IDENT, "Expecting literal name in arguments!");
+        nodes->push_back(m_Lexer->GetText());
+        m_Lexer->Advance();
+    }
+    m_Lexer->Advance(); // ':'
+    auto formalType = ParseFormalType();
+    return ASTNode::MakeFPSectionNode(line, col, nodes, formalType, isVar, isIn); 
+}
 
 // Rule: Type
 std::shared_ptr<ASTNode> Parser::ParseFormalType() { 
