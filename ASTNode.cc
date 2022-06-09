@@ -291,3 +291,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeProcedureHeading(
                                             std::shared_ptr<ASTNode> parameters) {
                                                 return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeProcedureDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right, std::string name) {
+    return std::make_shared<ASTNode>(line, col);
+}

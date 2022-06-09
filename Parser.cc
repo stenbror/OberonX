@@ -607,7 +607,18 @@ std::shared_ptr<ASTNode> Parser::ParseExitStatement() {
     return ASTNode::MakeExitStatementNode(line, col); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: ProcedureHeading [ ';' ] ProcedureBody 'END' ident 
+std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseProcedureHeading();
+    if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+    auto right = ParseProcedureBody();
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' in 'PROCEDURE' or 'PROC' declaration!");
+    CheckSymbol(T_IDENT, "Missing name literal at end of 'PROCEDURE' or 'PROC' declaration!");
+    auto name = m_Lexer->GetText();
+    m_Lexer->Advance();
+    return ASTNode::MakeProcedureDeclarationNode(line, col, left, right, name); 
+}
 
 // Rule: ( 'PROCEDURE' | 'PROC' ) [ Reciver ] IdentDef [ FormalParameters ]
 std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { 

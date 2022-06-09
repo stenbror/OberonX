@@ -118,6 +118,7 @@ class ASTNode
                                             std::shared_ptr<ASTNode> reciver, 
                                             std::shared_ptr<ASTNode> name, 
                                             std::shared_ptr<ASTNode> parameters);
+        static std::shared_ptr<ASTNode> MakeProcedureDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right, std::string name);
 
     private:
         unsigned int m_Line;
