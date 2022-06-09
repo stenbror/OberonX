@@ -582,7 +582,15 @@ std::shared_ptr<ASTNode> Parser::ParseWithStatement() {
     return ASTNode::WithStatementNode(line, col, GuardNodes, StatementBlockNodes, elsePart); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseGuard() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Qualident ':' Qualident
+std::shared_ptr<ASTNode> Parser::ParseGuard() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseQualident();
+    CheckSymbolAndAdvance(T_COLON, "Expecting ':' in guard part of 'WITH' Statement!");
+    auto right = ParseQualident();
+    return ASTNode::GuardNode(line, col, left, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseLoopStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseExitStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
