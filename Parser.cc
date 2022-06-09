@@ -562,7 +562,26 @@ std::shared_ptr<ASTNode> Parser::ParseForStatement() {
     return ASTNode::MakeForStatementNode(line, col, literalText, left, right, next, seq); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseWithStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'WITH' Guard 'DO' StatementSequence { '|' Guard 'DO' StatementSequence } [ 'ELSE' StatementSequence ] 'END'
+std::shared_ptr<ASTNode> Parser::ParseWithStatement() {
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto GuardNodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    auto StatementBlockNodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    m_Lexer->Advance(); // 'WITH'
+    GuardNodes->push_back(ParseGuard());
+    CheckSymbolAndAdvance(T_DO, "Expecting 'DO' in 'WITH' Statement!");
+    StatementBlockNodes->push_back(ParseStatementSequence());
+    while (m_Lexer->GetSymbol() == T_BAR) {
+        m_Lexer->Advance();
+        GuardNodes->push_back(ParseGuard());
+        CheckSymbolAndAdvance(T_DO, "Expecting 'DO' in 'WITH' Statement!");
+        StatementBlockNodes->push_back(ParseStatementSequence());
+    }
+    auto elsePart = m_Lexer->GetSymbol() == T_ELSE ? ParseElseStatement() : nullptr;
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of 'WITH' Statement!");
+    return ASTNode::WithStatementNode(line, col, GuardNodes, StatementBlockNodes, elsePart); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseGuard() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLoopStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseExitStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

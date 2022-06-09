@@ -92,6 +92,13 @@ class ASTNode
                                             std::shared_ptr<ASTNode> right,
                                             std::shared_ptr<ASTNode> next,
                                             std::shared_ptr<ASTNode> seq);
+        static std::shared_ptr<ASTNode> WithStatementNode(
+                                            unsigned int line, 
+                                            unsigned int col,
+                                            std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> GuardNodes,
+                                            std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> StatementBlockNodes,
+                                            std::shared_ptr<ASTNode> elsePart);
+        
 
     private:
         unsigned int m_Line;

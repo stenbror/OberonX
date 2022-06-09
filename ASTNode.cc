@@ -238,3 +238,12 @@ std::shared_ptr<ASTNode> ASTNode::MakeForStatementNode(
                                             std::shared_ptr<ASTNode> seq) {
                                                 return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::WithStatementNode(
+                                            unsigned int line, 
+                                            unsigned int col,
+                                            std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> GuardNodes,
+                                            std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> StatementBlockNodes,
+                                            std::shared_ptr<ASTNode> elsePart) {
+                                                return std::make_shared<ASTNode>(line, col);
+}
