@@ -600,13 +600,47 @@ std::shared_ptr<ASTNode> Parser::ParseLoopStatement() {
     return ASTNode::MakeLoopStatementNode(line, col, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseExitStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'EXIT'
+std::shared_ptr<ASTNode> Parser::ParseExitStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    return ASTNode::MakeExitStatementNode(line, col); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseReciver() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureBody() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseDeclarationSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseReturnStatement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: 'RETURN' [ Expression ]
+std::shared_ptr<ASTNode> Parser::ParseReturnStatement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    std::shared_ptr<ASTNode> right = nullptr;
+    switch (m_Lexer->GetSymbol()) {
+        case T_SEMICOLON:
+        case T_END:
+        case T_IF:
+        case T_CASE:
+        case T_WITH:
+        case T_LOOP:
+        case T_EXIT:
+        case T_RETURN:
+        case T_WHILE:
+        case T_REPEAT:
+        case T_FOR:
+        case T_IDENT:
+        case T_PROCEDURE:
+        case T_PROC:
+        case T_LEFTPAREN:   break;
+        default:
+            right = ParseExpression();
+
+    }
+    return ASTNode::MakeReturnStatementNode(line, col, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseFormalParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseReturnType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFPSection() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

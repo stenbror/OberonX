@@ -255,3 +255,11 @@ std::shared_ptr<ASTNode> ASTNode::GuardNode(unsigned int line, unsigned int col,
 std::shared_ptr<ASTNode> ASTNode::MakeLoopStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeExitStatementNode(unsigned int line, unsigned int col) {
+    return std::make_shared<ASTNode>(line, col);   
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeReturnStatementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col); 
+}
