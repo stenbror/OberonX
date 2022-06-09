@@ -651,12 +651,20 @@ std::shared_ptr<ASTNode> Parser::ParseFormalParameters() {
         nodes->push_back(ParseFPSection());
     }
     m_Lexer->Advance(); // ')'
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+    return ASTNode::MakeFormalParametersNode(line, col, nodes); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseReturnType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Type
+std::shared_ptr<ASTNode> Parser::ParseReturnType() { 
+    return ParseType(); // Possible remove this rule later! 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseFPSection() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseFormalType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: Type
+std::shared_ptr<ASTNode> Parser::ParseFormalType() { 
+    return ParseType(); // ossible remove this rule later! 
+}
 
 // Rule: 'MODULE' Ident [ TypeParams ] [ ';' ] { ImportSequence | DeclarationSequence } [ 'BEGIN' StatementSequence ] 'END' Ident [ '.' ]
 std::shared_ptr<ASTNode> Parser::ParseModule() { 
