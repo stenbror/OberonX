@@ -111,6 +111,13 @@ class ASTNode
                                             bool isVar,
                                             bool isIn);
         static std::shared_ptr<ASTNode> MakeReciverNode(unsigned int line, unsigned int col, std::string left, std::string right);
+        static std::shared_ptr<ASTNode> MakeProcedureHeading(
+                                            unsigned int line, 
+                                            unsigned int col, 
+                                            bool isProc, 
+                                            std::shared_ptr<ASTNode> reciver, 
+                                            std::shared_ptr<ASTNode> name, 
+                                            std::shared_ptr<ASTNode> parameters);
 
     private:
         unsigned int m_Line;

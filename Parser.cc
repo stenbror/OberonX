@@ -608,7 +608,21 @@ std::shared_ptr<ASTNode> Parser::ParseExitStatement() {
 }
 
 std::shared_ptr<ASTNode> Parser::ParseProcedureDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: ( 'PROCEDURE' | 'PROC' ) [ Reciver ] IdentDef [ FormalParameters ]
+std::shared_ptr<ASTNode> Parser::ParseProcedureHeading() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto isProc = false;
+    if (m_Lexer->GetSymbol() == T_PROCEDURE) m_Lexer->Advance();
+    else {
+        isProc = true;
+        m_Lexer->Advance();
+    }
+    auto reciver = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseReciver() : nullptr;
+    auto name = ParseIdentDef();
+    auto formal = m_Lexer->GetSymbol() == T_LEFTPAREN ? ParseFormalParameters() : nullptr;
+    return ASTNode::MakeProcedureHeading(line, col, isProc, reciver, name, formal); 
+}
 
 // Rule: '(' [ 'VAR' | 'IN' ] ident ':' ident ')'
 std::shared_ptr<ASTNode> Parser::ParseReciver() { 
@@ -671,7 +685,7 @@ std::shared_ptr<ASTNode> Parser::ParseReturnStatement() {
 // Rule: '(' FPSection { [ ';' ] FPSection } ')'
 std::shared_ptr<ASTNode> Parser::ParseFormalParameters() { 
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
-    m_Lexer->Advance(); // '(')
+    m_Lexer->Advance(); // '('
     auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
     nodes->push_back(ParseFPSection());
     while (m_Lexer->GetSymbol() != T_RIGHTPAREN) {

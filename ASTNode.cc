@@ -281,3 +281,13 @@ std::shared_ptr<ASTNode> ASTNode::MakeFPSectionNode(
 std::shared_ptr<ASTNode> ASTNode::MakeReciverNode(unsigned int line, unsigned int col, std::string left, std::string right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeProcedureHeading(
+                                            unsigned int line, 
+                                            unsigned int col, 
+                                            bool isProc, 
+                                            std::shared_ptr<ASTNode> reciver, 
+                                            std::shared_ptr<ASTNode> name, 
+                                            std::shared_ptr<ASTNode> parameters) {
+                                                return std::make_shared<ASTNode>(line, col);
+}
