@@ -303,3 +303,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeProcedureBodyNode(unsigned int line, unsig
 std::shared_ptr<ASTNode> ASTNode::MakeSetNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeElementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}

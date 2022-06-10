@@ -367,7 +367,18 @@ std::shared_ptr<ASTNode> Parser::ParseSet() {
     return ASTNode::MakeSetNode(line, col, nodes); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseElement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Expression [ '..' Expression ]
+std::shared_ptr<ASTNode> Parser::ParseElement() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseExpression();
+    if (m_Lexer->GetSymbol() == T_UPTO) {
+        m_Lexer->Advance();
+        auto right = ParseExpression();
+        return ASTNode::MakeElementNode(line, col, left, right);
+    }
+    return left; 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseActualParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
 // Rule: IfStatement | CaseStatement | WithStatement | LoopStatement | ExitStatement | ReturnStatement | WhileStatement | RepeatStatement | ForStatement | Assignment | ProcedureCall
