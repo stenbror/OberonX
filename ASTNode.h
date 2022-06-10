@@ -123,6 +123,7 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeSetNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
         static std::shared_ptr<ASTNode> MakeElementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeActualParametersNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeDesignatorNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
 
     private:
         unsigned int m_Line;

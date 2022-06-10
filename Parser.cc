@@ -105,7 +105,20 @@ std::shared_ptr<ASTNode> Parser::ParseIdentList() { return std::make_shared<ASTN
 std::shared_ptr<ASTNode> Parser::ParsePointerType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseDesignator() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: Qualident { Selector } 
+std::shared_ptr<ASTNode> Parser::ParseDesignator() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseQualident();
+    if (m_Lexer->GetSymbol() == T_DOT || m_Lexer->GetSymbol() == T_LEFTPAREN || m_Lexer->GetSymbol() == T_LEFTBRACKET || m_Lexer->GetSymbol() == T_ARROW) {
+        auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+        while (m_Lexer->GetSymbol() == T_DOT || m_Lexer->GetSymbol() == T_LEFTPAREN || m_Lexer->GetSymbol() == T_LEFTBRACKET || m_Lexer->GetSymbol() == T_ARROW) 
+            nodes->push_back(ParseSelector());
+        return ASTNode::MakeDesignatorNode(line, col, left, nodes);
+    }
+    return left; 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseSelector() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
 // Rule: Expression { ',' Expression }
