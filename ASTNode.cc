@@ -315,3 +315,19 @@ std::shared_ptr<ASTNode> ASTNode::MakeActualParametersNode(unsigned int line, un
 std::shared_ptr<ASTNode> ASTNode::MakeDesignatorNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeDotNameNode(unsigned int line, unsigned int col, std::string text) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeCallQualidentNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeIndexNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
+
+std::shared_ptr<ASTNode> ASTNode::MakeArrowNode(unsigned int line, unsigned int col) {
+    return std::make_shared<ASTNode>(line, col);
+}

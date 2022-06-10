@@ -119,7 +119,37 @@ std::shared_ptr<ASTNode> Parser::ParseDesignator() {
     return left; 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseSelector() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: '.' ident | '[' ExpList '] | '^' | '(' Qualident ')
+std::shared_ptr<ASTNode> Parser::ParseSelector() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    switch (m_Lexer->GetSymbol()) {
+        case T_DOT:
+            {
+                m_Lexer->Advance();
+                CheckSymbol(T_IDENT, "Expecting name literal after '.'");
+                auto text = m_Lexer->GetText();
+                m_Lexer->Advance();
+                return ASTNode::MakeDotNameNode(line, col, text);
+            }
+        case T_LEFTPAREN:
+            {
+                m_Lexer->Advance();
+                auto right = ParseQualident();
+                CheckSymbolAndAdvance(T_RIGHTPAREN, "Expecting ')' in selector!");
+                return ASTNode::MakeCallQualidentNode(line, col, right);
+            }
+        case T_LEFTBRACKET:
+            {
+                m_Lexer->Advance();
+                auto right = ParseExpList();
+                CheckSymbolAndAdvance(T_RIGHTBRACKET, "Expected ']' in indexing!");
+                return ASTNode::MakeIndexNode(line, col, right);
+            }
+        default:    // T_ARROW:
+            m_Lexer->Advance();
+            return ASTNode::MakeArrowNode(line, col);
+    }
+}
 
 // Rule: Expression { ',' Expression }
 std::shared_ptr<ASTNode> Parser::ParseExpList() { 

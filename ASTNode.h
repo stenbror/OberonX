@@ -124,6 +124,10 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeElementNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeActualParametersNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeDesignatorNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
+        static std::shared_ptr<ASTNode> MakeDotNameNode(unsigned int line, unsigned int col, std::string text);
+        static std::shared_ptr<ASTNode> MakeCallQualidentNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeIndexNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeArrowNode(unsigned int line, unsigned int col);
 
     private:
         unsigned int m_Line;
