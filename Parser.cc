@@ -351,7 +351,22 @@ std::shared_ptr<ASTNode> Parser::ParseFactor() {
     } 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseSet() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: '{' [ Element { ',' Element } ] '}'
+std::shared_ptr<ASTNode> Parser::ParseSet() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    if (m_Lexer->GetSymbol() != T_RIGHTCURLY) {
+        nodes->push_back(ParseElement());
+        while (m_Lexer->GetSymbol() == T_COMMA) {
+            m_Lexer->Advance();
+            nodes->push_back(ParseElement());
+        }
+    }
+    CheckSymbolAndAdvance(T_RIGHTCURLY, "Expecting '}' at end of set!");
+    return ASTNode::MakeSetNode(line, col, nodes); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseElement() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseActualParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
