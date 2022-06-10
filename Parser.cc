@@ -379,7 +379,14 @@ std::shared_ptr<ASTNode> Parser::ParseElement() {
     return left; 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseActualParameters() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: '(' [ ExpList ] ')'
+std::shared_ptr<ASTNode> Parser::ParseActualParameters() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    CheckSymbolAndAdvance(T_LEFTPAREN, "Expecting '(' in Parameters!");
+    auto right = m_Lexer->GetSymbol() != T_RIGHTPAREN ? ParseExpList() : nullptr;
+    CheckSymbolAndAdvance(T_RIGHTPAREN, "Expecting ')' in Parameters!");
+    return ASTNode::MakeActualParametersNode(line, col, right); 
+}
 
 // Rule: IfStatement | CaseStatement | WithStatement | LoopStatement | ExitStatement | ReturnStatement | WhileStatement | RepeatStatement | ForStatement | Assignment | ProcedureCall
 std::shared_ptr<ASTNode> Parser::ParseStatement() { 
