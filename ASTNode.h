@@ -142,6 +142,7 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeProcedureTypeNode(unsigned int line, unsigned int col, bool isProc, bool isPointer, bool isArrow, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeVariableDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeConstDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeTypeDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;

@@ -99,7 +99,14 @@ std::shared_ptr<ASTNode> Parser::ParseConstExpression() {
     return ParseExpression(); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: IdentDef '=' Type
+std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseIdentDef();
+    CheckSymbolAndAdvance(T_ASSIGN, "Expecting '=' ion Type declaration!");
+    auto right = ParseType();
+    return ASTNode::MakeTypeDeclarationNode(line, col, left, right); 
+}
 
 // Rule: NamedType | EnumerationType | ArrayType | RecordType | PointerType | ProcedureType
 std::shared_ptr<ASTNode> Parser::ParseType() { 
