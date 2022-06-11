@@ -111,7 +111,27 @@ std::shared_ptr<ASTNode> Parser::ParseEnumeration() {
 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseArrayType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'ARRAY' '[' LengthList ']' 'OF' Type | '[' [ LengthList ] ']' Type
+std::shared_ptr<ASTNode> Parser::ParseArrayType() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    if (m_Lexer->GetSymbol() == T_ARRAY) {
+        m_Lexer->Advance();
+        CheckSymbolAndAdvance(T_LEFTBRACKET, "Expecting '[' in 'ARRAY' type!");
+        auto left = ParseLengthList();
+        CheckSymbolAndAdvance(T_RIGHTBRACKET, "Expecting ']' in 'ARRAY' type!");
+        CheckSymbolAndAdvance(T_OF, "Expecting 'OF' in 'ARRAY' type!");
+        auto right = ParseType();
+        return ASTNode::MakeArrayOfNode(line, col, left, right);
+    }
+    else {
+        CheckSymbolAndAdvance(T_LEFTBRACKET, "Expecting '[' in 'ARRAY' type!");
+        auto left = m_Lexer->GetSymbol() != T_RIGHTBRACKET ? ParseLengthList() : nullptr;
+        CheckSymbolAndAdvance(T_RIGHTBRACKET, "Expecting ']' in 'ARRAY' type!");
+        auto right = ParseType();
+        return ASTNode::MakeArrayNode(line, col, left, right);
+    }
+}
+
 std::shared_ptr<ASTNode> Parser::ParseLengthList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLength() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseVarLength() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
