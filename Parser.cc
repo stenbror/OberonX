@@ -144,7 +144,6 @@ std::shared_ptr<ASTNode> Parser::ParseEnumeration() {
     }
     m_Lexer->Advance(); // ')'
     return ASTNode::MakeEnumerationNode(line, col, nodes);
-
 }
 
 // Rule: 'ARRAY' '[' LengthList ']' 'OF' Type | '[' [ LengthList ] ']' Type
@@ -199,7 +198,22 @@ std::shared_ptr<ASTNode> Parser::ParseVarLength() {
     return ParseExpression(); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseTypeActuals() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: '(' NamedType { [ ',' ] NamedType } ')'
+std::shared_ptr<ASTNode> Parser::ParseTypeActuals() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    CheckSymbol(T_IDENT, "Expecting name of enumeration element!");
+    nodes->push_back(ParseNamedType());
+    while (m_Lexer->GetSymbol() != T_RIGHTPAREN) {
+        if (m_Lexer->GetSymbol() == T_COMMA) m_Lexer->Advance();
+        CheckSymbol(T_IDENT, "Expecting name of enumeration element!");
+        nodes->push_back(ParseNamedType());
+    }
+    m_Lexer->Advance(); // ')'
+    return ASTNode::MakeTypeActualsNode(line, col, nodes); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseRecordType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseBaseType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFieldListSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
