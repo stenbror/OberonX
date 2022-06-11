@@ -132,9 +132,37 @@ std::shared_ptr<ASTNode> Parser::ParseArrayType() {
     }
 }
 
-std::shared_ptr<ASTNode> Parser::ParseLengthList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseLength() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseVarLength() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Length { ',' Length } | 'VAR' varlength { ',' varlength }
+std::shared_ptr<ASTNode> Parser::ParseLengthList() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    if (m_Lexer->GetSymbol() == T_VAR) {
+        m_Lexer->Advance();
+        nodes->push_back(ParseVarLength());
+        while (m_Lexer->GetSymbol() == T_COMMA) {
+            m_Lexer->Advance();
+            nodes->push_back(ParseVarLength());
+        }
+        return ASTNode::MakeLengthList(line, col, true, nodes);
+    }
+    nodes->push_back(ParseLength());
+    while (m_Lexer->GetSymbol() == T_COMMA) {
+        m_Lexer->Advance();
+        nodes->push_back(ParseLength());
+    }
+    return ASTNode::MakeLengthList(line, col, false, nodes);
+}
+
+// Rule: ConstExpression
+std::shared_ptr<ASTNode> Parser::ParseLength() { 
+    return ParseExpression(); 
+}
+
+// Rule: Expression
+std::shared_ptr<ASTNode> Parser::ParseVarLength() { 
+    return ParseExpression(); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseTypeActuals() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParserecordType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseBaseType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

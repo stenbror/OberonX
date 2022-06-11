@@ -131,6 +131,7 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeEnumerationNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::string>> nodes);
         static std::shared_ptr<ASTNode> MakeArrayOfNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeArrayNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
+        static std::shared_ptr<ASTNode> MakeLengthList(unsigned int line, unsigned int col, bool isVar, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
 
     private:
         unsigned int m_Line;
