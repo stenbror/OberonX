@@ -138,6 +138,12 @@ _whitespace:
         goto _whitespace;
     }
 
+    /* Handle End Of File */
+    if (m_ch == '\0') {
+        m_Symbol = T_EOF;
+        return;
+    }
+
     /* Literal or reserved keywords */
     if (m_ch == '_' || isStartLetter()) {
         m_Buffer.clear();
