@@ -1,6 +1,9 @@
 
 #include <map>
 #include <string>
+#include <fstream>
+#include <memory>
+#include <string>
 
 #pragma once
 
@@ -17,8 +20,15 @@ typedef enum {
 
 class Tokenizer
 {
+    private:
+        std::shared_ptr<std::ifstream> m_fin;
+        TokenCode m_Symbol;
+        unsigned int m_Line;
+        unsigned int m_Col;
+        std::string m_Buffer;
+
     public:
-        Tokenizer();
+        Tokenizer(const std::shared_ptr<std::ifstream> fin);
         TokenCode GetSymbol();
         void Advance();
         unsigned int GetLine();

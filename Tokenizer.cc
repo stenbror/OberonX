@@ -83,9 +83,19 @@ auto reservedKeywords = std::map<std::string, TokenCode>() = {
 
 
 
-Tokenizer::Tokenizer() { }
-TokenCode Tokenizer::GetSymbol() { return TokenCode::T_EOF; }
+Tokenizer::Tokenizer(const std::shared_ptr<std::ifstream> fin) { 
+    m_fin = fin;
+    m_Symbol = T_EOF;
+    m_Line = 1;
+    m_Col = 1;
+}
+
+TokenCode Tokenizer::GetSymbol() { return m_Symbol; }
+
+unsigned int Tokenizer::GetLine() { return m_Line; }
+
+unsigned int Tokenizer::GetColumn() { return m_Col; }
+
+std::string Tokenizer::GetText() { return m_Buffer; }
+
 void Tokenizer::Advance() { }
-unsigned int Tokenizer::GetLine() { return 1; }
-unsigned int Tokenizer::GetColumn() { return 1; }
-std::string Tokenizer::GetText() { return "NAME"; }
