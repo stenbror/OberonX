@@ -371,3 +371,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeFieldListNode(unsigned int line, unsigned 
 std::shared_ptr<ASTNode> ASTNode::MakeIdentListNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakePointerNode(unsigned int line, unsigned int col, bool isArrow, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}

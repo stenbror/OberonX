@@ -268,7 +268,22 @@ std::shared_ptr<ASTNode> Parser::ParseIdentList() {
     return ASTNode::MakeIdentListNode(line, col, nodes); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParsePointerType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: ( 'POINTER' 'TO' | '^' ) Type
+std::shared_ptr<ASTNode> Parser::ParsePointerType() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    if (m_Lexer->GetSymbol() == T_POINTER) {
+        m_Lexer->Advance();
+        CheckSymbolAndAdvance(T_TO, "Expecting 'TO' in pointer declaration!");
+        auto right = ParseType();
+        return ASTNode::MakePointerNode(line, col, false, right);
+    }
+    else {
+        CheckSymbolAndAdvance(T_ARROW, "Expecting '^' in pointer declaration!");
+        auto right = ParseType();
+        return ASTNode::MakePointerNode(line, col, true, right);
+    }
+}
+
 std::shared_ptr<ASTNode> Parser::ParseProcedureType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
