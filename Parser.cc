@@ -94,7 +94,11 @@ std::shared_ptr<ASTNode> Parser::ParseConstDeclaration() {
     return ASTNode::MakeConstDeclarationNode(line, col, left, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseConstExpression() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Expression
+std::shared_ptr<ASTNode> Parser::ParseConstExpression() { 
+    return ParseExpression(); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
 // Rule: NamedType | EnumerationType | ArrayType | RecordType | PointerType | ProcedureType
