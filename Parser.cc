@@ -256,7 +256,18 @@ std::shared_ptr<ASTNode> Parser::ParseFieldList() {
     return ASTNode::MakeFieldListNode(line, col, left, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseIdentList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: Identdef { [','] Identdef }
+std::shared_ptr<ASTNode> Parser::ParseIdentList() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseIdentDef());
+    while (m_Lexer->GetSymbol() != T_COLON) {
+        if (m_Lexer->GetSymbol() == T_COMMA) m_Lexer->Advance();
+        nodes->push_back(ParseIdentDef());
+    }
+    return ASTNode::MakeIdentListNode(line, col, nodes); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParsePointerType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
