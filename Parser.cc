@@ -284,7 +284,43 @@ std::shared_ptr<ASTNode> Parser::ParsePointerType() {
     }
 }
 
-std::shared_ptr<ASTNode> Parser::ParseProcedureType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: ( 'PROCEDURE' | 'PROC' ) [ '(' ( 'POINTER' | '^' ) ')' ] [ FormapParameters ]
+std::shared_ptr<ASTNode> Parser::ParseProcedureType() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    bool isProc = false;
+    if (m_Lexer->GetSymbol() == T_PROCEDURE) m_Lexer->Advance();
+    else {
+        CheckSymbolAndAdvance(T_PROC, "Expecting 'PROC' in procedure declaration!");
+        isProc = true;
+    }
+    bool isArrow = false;
+    bool isPointer = false;
+    std::shared_ptr<ASTNode> right = nullptr; 
+    if (m_Lexer->GetSymbol() == T_LEFTPAREN) {
+        m_Lexer->Advance();
+        if (m_Lexer->GetSymbol() == T_POINTER) {
+            isPointer = true;
+            m_Lexer->Advance();
+            CheckSymbolAndAdvance(T_RIGHTPAREN, "Missing ')' in pointer part of procedure delaration!");
+        }
+        else if (m_Lexer->GetSymbol() == T_ARROW) {
+            isArrow = true;
+            m_Lexer->Advance();
+            CheckSymbolAndAdvance(T_RIGHTPAREN, "Missing ')' in pointer part of procedure delaration!");
+        }
+        else {
+            right = ParseFormalParameters();
+        }
+    }
+    if (isArrow || isPointer)
+    {
+        if (m_Lexer->GetSymbol() == T_LEFTPAREN) {
+            right = ParseFormalParameters();            
+        }
+    }
+    return ASTNode::MakeProcedureTypeNode(line, col, isProc, isPointer, isArrow, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
 // Rule: Qualident { Selector } 
