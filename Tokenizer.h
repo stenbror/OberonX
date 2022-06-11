@@ -38,5 +38,7 @@ class Tokenizer
 
     private:
         char GetChar();
+        bool isStartLetter();
+        bool isLetterOrDigit();
 
 };

@@ -83,7 +83,7 @@ std::shared_ptr<ASTNode> Parser::ParseIdentDef()
 std::shared_ptr<ASTNode> Parser::ParseConstDeclaration() { 
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     auto left = ParseIdentDef();
-    CheckSymbolAndAdvance(T_ASSIGN, "Expecting '=' in Const declaration!");
+    CheckSymbolAndAdvance(T_EQUAL, "Expecting '=' in Const declaration!");
     auto right = ParseConstExpression();
     return ASTNode::MakeConstDeclarationNode(line, col, left, right); 
 }
@@ -97,7 +97,7 @@ std::shared_ptr<ASTNode> Parser::ParseConstExpression() {
 std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { 
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     auto left = ParseIdentDef();
-    CheckSymbolAndAdvance(T_ASSIGN, "Expecting '=' ion Type declaration!");
+    CheckSymbolAndAdvance(T_EQUAL, "Expecting '=' ion Type declaration!");
     auto right = ParseType();
     return ASTNode::MakeTypeDeclarationNode(line, col, left, right); 
 }

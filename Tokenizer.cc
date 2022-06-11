@@ -103,6 +103,19 @@ char Tokenizer::GetChar() {
     return m_ch = !m_fin->eof() ? m_fin->get() : '\0';   
 }
 
+bool Tokenizer::isStartLetter() {
+    if (m_ch >= 'a' && m_ch <= 'z') return true;
+    else if (m_ch >= 'A' && m_ch <= 'Z') return true;
+    else return false;
+}
+
+bool Tokenizer::isLetterOrDigit() {
+    if (m_ch == '_' ) return true;
+    else if (m_ch >= '0' && m_ch <= '9') return true;
+    else if (isStartLetter()) return true;
+    else return false;
+}
+
 // Get next valid symbol for parser
 void Tokenizer::Advance() {
 
@@ -123,6 +136,23 @@ _whitespace:
         else m_ch = GetChar();
         m_Line++; m_Col = 1;
         goto _whitespace;
+    }
+
+    /* Literal or reserved keywords */
+    if (m_ch == '_' || isStartLetter()) {
+        m_Buffer.clear();
+        m_Buffer += m_ch; m_ch = GetChar(); m_Col++;
+        while (isLetterOrDigit()) {
+            m_Buffer += m_ch; m_Col++; m_ch = GetChar();
+        }
+        auto it = reservedKeywords.find(m_Buffer.c_str());
+        if (it != reservedKeywords.end()) {
+            m_Symbol = it->second;
+        }
+        else {
+            m_Symbol = T_IDENT;
+        }
+        return;
     }
 
     /* Operator or delimiters */
@@ -184,5 +214,82 @@ _comment:
             m_Col++; m_ch = GetChar();
             m_Symbol = T_RIGHTCURLY;
             return;
+        case '*' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_MUL;
+            return;
+        case '/' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_SLASH;
+            return;
+        case '+' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_PLUS;
+            return;
+        case '-' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_MINUS;
+            return;
+        case ':' :    
+            m_Col++; m_ch = GetChar();
+            if (m_ch == '=') {
+                m_Col++; m_ch = GetChar();
+                m_Symbol = T_ASSIGN;
+            }
+            else m_Symbol = T_COLON;
+            return;
+        case ';' :    
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_SEMICOLON;
+            return;
+        case '.' : 
+            m_Col++; m_ch = GetChar();
+            if (m_ch == '.') {
+                m_Col++; m_ch = GetChar();
+                m_Symbol = T_UPTO;
+            }
+            else m_Symbol = T_DOT;
+            return;
+        case ',' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_COMMA;
+            return;
+        case '#' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_HASH;
+            return;
+        case '<' :
+            m_Col++; m_ch = GetChar();
+            if (m_ch == '=') {
+                m_Col++; m_ch = GetChar();
+                m_Symbol = T_LESSEQUAL;
+            }
+            else m_Symbol = T_LESS;
+            return;
+        case '>' :
+            m_Col++; m_ch = GetChar();
+            if (m_ch == '=') {
+                m_Col++; m_ch = GetChar();
+                m_Symbol = T_GREATEREQUAL;
+            }
+            else m_Symbol = T_GREATER;
+            return;
+        case '=' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_EQUAL;
+            return;
+        case '^' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_ARROW;
+            return;
+        case '|' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_BAR;
+            return;
+        case '~' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_TILDE;
+            return;
+        default:    break;
     }
 }
