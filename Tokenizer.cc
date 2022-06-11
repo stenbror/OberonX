@@ -88,6 +88,7 @@ Tokenizer::Tokenizer(const std::shared_ptr<std::ifstream> fin) {
     m_Symbol = T_EOF;
     m_Line = 1;
     m_Col = 1;
+    m_ch = GetChar();
 }
 
 TokenCode Tokenizer::GetSymbol() { return m_Symbol; }
@@ -98,4 +99,90 @@ unsigned int Tokenizer::GetColumn() { return m_Col; }
 
 std::string Tokenizer::GetText() { return m_Buffer; }
 
-void Tokenizer::Advance() { }
+char Tokenizer::GetChar() {
+    return m_ch = !m_fin->eof() ? m_fin->get() : '\0';   
+}
+
+// Get next valid symbol for parser
+void Tokenizer::Advance() {
+
+_whitespace: 
+    /* Remove whitespace */
+    while (m_ch == ' ' || m_ch == '\t') {
+        m_Col++; m_ch = GetChar();
+    }
+
+    /* Handle newline */
+    if (m_ch == '\r' || m_ch == '\n') {
+        if (m_ch == '\r') {
+            m_ch = GetChar();
+            if (m_ch == '\n') {
+                m_ch = GetChar();
+            }
+        }
+        else m_ch = GetChar();
+        m_Line++; m_Col = 1;
+        goto _whitespace;
+    }
+
+    /* Operator or delimiters */
+    switch (m_ch) {
+        case '(' :
+            {
+                m_ch = GetChar();
+                m_Col++;
+                if (m_ch == '*') {
+                    m_Col++;
+                    m_ch = GetChar();
+_comment:
+                    while (m_ch != '*') {
+                        if (m_ch == '\r' || m_ch == '\n') {
+                            if (m_ch == '\r') {
+                                m_ch = GetChar();
+                                if (m_ch == '\n') {
+                                    m_ch = GetChar();
+                                }
+                            }
+                            else m_ch = GetChar();
+                            m_Line++; m_Col = 1;
+                            goto _comment;
+                        }
+                        if (m_ch == '\0') {
+                            m_Symbol = T_EOF;
+                            return;
+                        }
+                        m_Col++; m_ch = GetChar();
+                    }
+                    m_Col++; m_ch = GetChar();
+                    if (m_ch == ')') {
+                        m_Col++; m_ch = GetChar();
+                        goto _whitespace;
+                    }
+                    else goto _comment;
+                }
+                m_Symbol = T_LEFTPAREN;
+                return;
+            }
+            break;
+        case ')' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_RIGHTPAREN;
+            return;
+        case '[' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_LEFTBRACKET;
+            return;
+        case ']' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_RIGHTBRACKET;
+            return;
+        case '{' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_LEFTCURLY;
+            return;
+        case '}' :
+            m_Col++; m_ch = GetChar();
+            m_Symbol = T_RIGHTCURLY;
+            return;
+    }
+}

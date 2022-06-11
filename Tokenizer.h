@@ -26,6 +26,7 @@ class Tokenizer
         unsigned int m_Line;
         unsigned int m_Col;
         std::string m_Buffer;
+        char m_ch;
 
     public:
         Tokenizer(const std::shared_ptr<std::ifstream> fin);
@@ -34,5 +35,8 @@ class Tokenizer
         unsigned int GetLine();
         unsigned int GetColumn();
         std::string GetText();
+
+    private:
+        char GetChar();
 
 };
