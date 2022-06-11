@@ -128,6 +128,7 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeCallQualidentNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeIndexNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> right);
         static std::shared_ptr<ASTNode> MakeArrowNode(unsigned int line, unsigned int col);
+        static std::shared_ptr<ASTNode> MakeEnumerationNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::string>> nodes);
 
     private:
         unsigned int m_Line;

@@ -331,3 +331,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeIndexNode(unsigned int line, unsigned int 
 std::shared_ptr<ASTNode> ASTNode::MakeArrowNode(unsigned int line, unsigned int col) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeEnumerationNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::string>> nodes) {
+    return std::make_shared<ASTNode>(line, col);   
+}

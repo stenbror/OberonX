@@ -91,7 +91,26 @@ std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { return std::make_share
 std::shared_ptr<ASTNode> Parser::ParseType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseNamedType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseTypeParams() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseEnumeration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: '(' ident { [ ',' ] ident } ')'
+std::shared_ptr<ASTNode> Parser::ParseEnumeration() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    m_Lexer->Advance();
+    auto nodes = std::make_shared<std::vector<std::string>>();
+    CheckSymbol(T_IDENT, "Expecting name of enumeration element!");
+    nodes->push_back(m_Lexer->GetText());
+    m_Lexer->Advance();
+    while (m_Lexer->GetSymbol() != T_RIGHTPAREN) {
+        if (m_Lexer->GetSymbol() == T_COMMA) m_Lexer->Advance();
+        CheckSymbol(T_IDENT, "Expecting name of enumeration element!");
+        nodes->push_back(m_Lexer->GetText());
+        m_Lexer->Advance();
+    }
+    m_Lexer->Advance(); // ')'
+    return ASTNode::MakeEnumerationNode(line, col, nodes);
+
+}
+
 std::shared_ptr<ASTNode> Parser::ParseArrayType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLengthList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseLength() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
