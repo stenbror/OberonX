@@ -234,7 +234,18 @@ std::shared_ptr<ASTNode> Parser::ParseBaseType() {
     return ParseNamedType(); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseFieldListSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: FieldList [ ';' ] { FieldList [ ';' ] }
+std::shared_ptr<ASTNode> Parser::ParseFieldListSequence() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::shared_ptr<ASTNode>>>();
+    nodes->push_back(ParseFieldList());
+    while (m_Lexer->GetSymbol() != T_END) {
+        if (m_Lexer->GetSymbol() == T_SEMICOLON) m_Lexer->Advance();
+        if (m_Lexer->GetSymbol() != T_END) nodes->push_back(ParseFieldList());
+    }
+    return ASTNode::MakeFieldListSequenceNode(line, col, nodes); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseFieldList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseIdentList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParsePointerType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
