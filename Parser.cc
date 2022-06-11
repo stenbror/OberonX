@@ -85,7 +85,15 @@ std::shared_ptr<ASTNode> Parser::ParseIdentDef()
     return ASTNode::MakeIdentDefNode(line, col, literalText, isReadOnlyExport, isExport); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseConstDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: IdentDef '=' ConstExpression
+std::shared_ptr<ASTNode> Parser::ParseConstDeclaration() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseIdentDef();
+    CheckSymbolAndAdvance(T_ASSIGN, "Expecting '=' in Const declaration!");
+    auto right = ParseConstExpression();
+    return ASTNode::MakeConstDeclarationNode(line, col, left, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseConstExpression() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 
@@ -326,8 +334,8 @@ std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() {
     auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
     auto left = ParseIdentList();
     CheckSymbolAndAdvance(T_COLON, "Expecting ':' in Variable declaration!");
-
-    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+    auto right = ParseType();
+    return ASTNode::MakeVariableDeclarationNode(line, col, left, right); 
 }
 
 // Rule: Qualident { Selector } 

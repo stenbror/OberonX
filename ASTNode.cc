@@ -383,3 +383,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeProcedureTypeNode(unsigned int line, unsig
 std::shared_ptr<ASTNode> ASTNode::MakeVariableDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeConstDeclarationNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}
