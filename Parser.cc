@@ -98,6 +98,7 @@ std::shared_ptr<ASTNode> Parser::ParseType() {
         case T_ARRAY:
         case T_LEFTBRACKET: return ParseArrayType();
         case T_RECORD:      return ParseRecordType();
+        case T_ARROW:
         case T_POINTER:     return ParsePointerType();
         case T_PROCEDURE:
         case T_PROC:        return ParseProcedureType();
@@ -246,7 +247,15 @@ std::shared_ptr<ASTNode> Parser::ParseFieldListSequence() {
     return ASTNode::MakeFieldListSequenceNode(line, col, nodes); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseFieldList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: IdentList ':' Type
+std::shared_ptr<ASTNode> Parser::ParseFieldList() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseIdentList();
+    CheckSymbolAndAdvance(T_COLON, "Expecting ':' in Field declaration of 'RECORD'!");
+    auto right = ParseType();
+    return ASTNode::MakeFieldListNode(line, col, left, right); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseIdentList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParsePointerType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseProcedureType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
