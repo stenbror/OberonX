@@ -355,3 +355,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeTypeParamsNode(unsigned int line, unsigned
 std::shared_ptr<ASTNode> ASTNode::MakeTypeActualsNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeRecordTypeNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right) {
+    return std::make_shared<ASTNode>(line, col);
+}

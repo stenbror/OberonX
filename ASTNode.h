@@ -134,6 +134,7 @@ class ASTNode
         static std::shared_ptr<ASTNode> MakeLengthList(unsigned int line, unsigned int col, bool isVar, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
         static std::shared_ptr<ASTNode> MakeTypeParamsNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::string>> nodes);
         static std::shared_ptr<ASTNode> MakeTypeActualsNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes);
+        static std::shared_ptr<ASTNode> MakeRecordTypeNode(unsigned int line, unsigned int col, std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right);
 
     private:
         unsigned int m_Line;

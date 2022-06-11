@@ -214,8 +214,26 @@ std::shared_ptr<ASTNode> Parser::ParseTypeActuals() {
     return ASTNode::MakeTypeActualsNode(line, col, nodes); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseRecordType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseBaseType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: 'RECORD' [ '(' BaseType ')' ] [ FieldSequence ] 'END'
+std::shared_ptr<ASTNode> Parser::ParseRecordType() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    CheckSymbolAndAdvance(T_RECORD, "Expecting 'RECORD'!");
+    std::shared_ptr<ASTNode> left = nullptr; // BaseType
+    if (m_Lexer->GetSymbol() == T_LEFTPAREN) {
+        m_Lexer->Advance();
+        left = ParseBaseType();
+        CheckSymbolAndAdvance(T_RIGHTPAREN, "Expecting ')' in base 'RECORD' type!");
+    }
+    auto right = m_Lexer->GetSymbol() != T_END ? ParseFieldListSequence() : nullptr;
+    CheckSymbolAndAdvance(T_END, "Expecting 'END' at end of 'RECORD' type!");
+    return ASTNode::MakeRecordTypeNode(line, col, left, right); 
+}
+
+// Rule: NamedType
+std::shared_ptr<ASTNode> Parser::ParseBaseType() { 
+    return ParseNamedType(); 
+}
+
 std::shared_ptr<ASTNode> Parser::ParseFieldListSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFieldList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseIdentList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
