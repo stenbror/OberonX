@@ -347,3 +347,7 @@ std::shared_ptr<ASTNode> ASTNode::MakeArrayNode(unsigned int line, unsigned int 
 std::shared_ptr<ASTNode> ASTNode::MakeLengthList(unsigned int line, unsigned int col, bool isVar, std::shared_ptr<std::vector<std::shared_ptr<ASTNode>>> nodes) {
     return std::make_shared<ASTNode>(line, col);
 }
+
+std::shared_ptr<ASTNode> ASTNode::MakeTypeParamsNode(unsigned int line, unsigned int col, std::shared_ptr<std::vector<std::string>> nodes) {
+    return std::make_shared<ASTNode>(line, col);
+}

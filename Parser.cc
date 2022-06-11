@@ -88,9 +88,45 @@ std::shared_ptr<ASTNode> Parser::ParseIdentDef()
 std::shared_ptr<ASTNode> Parser::ParseConstDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseConstExpression() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseTypeDeclaration() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseNamedType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParseTypeParams() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+
+// Rule: NamedType | EnumerationType | ArrayType | RecordType | PointerType | ProcedureType
+std::shared_ptr<ASTNode> Parser::ParseType() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    switch (m_Lexer->GetSymbol()) {
+        case T_IDENT:       return ParseNamedType();
+        case T_LEFTPAREN:   return ParseEnumeration();
+        case T_ARRAY:
+        case T_LEFTBRACKET: return ParseArrayType();
+        case T_RECORD:      return ParseRecordType();
+        case T_POINTER:     return ParsePointerType();
+        case T_PROCEDURE:
+        case T_PROC:        return ParseProcedureType();
+        default:            throw SyntaxError(m_Lexer->GetLine(), m_Lexer->GetColumn(), "Illegal Type!");;
+    }
+}
+
+// Rule: Qualident
+std::shared_ptr<ASTNode> Parser::ParseNamedType() { 
+    return ParseQualident(); 
+}
+
+// Rule: '(' ident { [ ','  ident ] } ')'
+std::shared_ptr<ASTNode> Parser::ParseTypeParams() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto nodes = std::make_shared<std::vector<std::string>>();
+    CheckSymbolAndAdvance(T_LEFTPAREN, "Expecting '(' in Type Params!");
+    CheckSymbol(T_IDENT, "Expecting name literal in Type Params!");
+    nodes->push_back(m_Lexer->GetText());
+    m_Lexer->Advance();
+    while (m_Lexer->GetSymbol() != T_RIGHTPAREN) {
+        if (m_Lexer->GetSymbol() == T_COMMA) m_Lexer->Advance();
+        CheckSymbol(T_IDENT, "Expecting name literal in Type Params!");
+        nodes->push_back(m_Lexer->GetText());
+        m_Lexer->Advance();
+    }
+    m_Lexer->Advance();
+    return ASTNode::MakeTypeParamsNode(line, col, nodes); 
+}
 
 // Rule: '(' ident { [ ',' ] ident } ')'
 std::shared_ptr<ASTNode> Parser::ParseEnumeration() { 
@@ -164,7 +200,7 @@ std::shared_ptr<ASTNode> Parser::ParseVarLength() {
 }
 
 std::shared_ptr<ASTNode> Parser::ParseTypeActuals() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
-std::shared_ptr<ASTNode> Parser::ParserecordType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+std::shared_ptr<ASTNode> Parser::ParseRecordType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseBaseType() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFieldListSequence() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
 std::shared_ptr<ASTNode> Parser::ParseFieldList() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }

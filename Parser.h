@@ -40,7 +40,7 @@ class Parser
         std::shared_ptr<ASTNode> ParseLengthList();
         std::shared_ptr<ASTNode> ParseLength();
         std::shared_ptr<ASTNode> ParseVarLength();
-        std::shared_ptr<ASTNode> ParserecordType();
+        std::shared_ptr<ASTNode> ParseRecordType();
         std::shared_ptr<ASTNode> ParseBaseType();
         std::shared_ptr<ASTNode> ParseFieldListSequence();
         std::shared_ptr<ASTNode> ParseFieldList();
