@@ -321,7 +321,14 @@ std::shared_ptr<ASTNode> Parser::ParseProcedureType() {
     return ASTNode::MakeProcedureTypeNode(line, col, isProc, isPointer, isArrow, right); 
 }
 
-std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { return std::make_shared<ASTNode>(ASTNode(1, 1)); }
+// Rule: IdentList ':' Type
+std::shared_ptr<ASTNode> Parser::ParseVariableDeclararation() { 
+    auto line = m_Lexer->GetLine(); auto col = m_Lexer->GetColumn();
+    auto left = ParseIdentList();
+    CheckSymbolAndAdvance(T_COLON, "Expecting ':' in Variable declaration!");
+
+    return std::make_shared<ASTNode>(ASTNode(1, 1)); 
+}
 
 // Rule: Qualident { Selector } 
 std::shared_ptr<ASTNode> Parser::ParseDesignator() { 
